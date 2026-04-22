@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>TextFlow</AssemblyName>
+    <RootNamespace>TextFlow</RootNamespace>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <ApplicationIcon>falcon_32x32.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Highlighting\JSON-Mode.xshd" />
+    <None Remove="Resources\Highlighting\XAML-Mode.xshd" />
+    <None Remove="Resources\Highlighting\Markdown-Mode.xshd" />
+    <Content Include="falcon_32x32.ico" />
+    <EmbeddedResource Include="Resources\Highlighting\JSON-Mode.xshd">
+      <LogicalName>TextFlow.Highlighting.JSON-Mode.xshd</LogicalName>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Highlighting\XAML-Mode.xshd">
+      <LogicalName>TextFlow.Highlighting.XAML-Mode.xshd</LogicalName>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Highlighting\Markdown-Mode.xshd">
+      <LogicalName>TextFlow.Highlighting.Markdown-Mode.xshd</LogicalName>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Highlighting\YAML-Mode.xshd">
+      <LogicalName>TextFlow.Highlighting.YAML-Mode.xshd</LogicalName>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="TextFlowIcon.ico" />
+  </ItemGroup>
+
+</Project>

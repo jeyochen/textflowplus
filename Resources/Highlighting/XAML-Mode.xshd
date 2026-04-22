@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="XAML"
+                  extensions=".xaml"
+                  xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+	<!-- 颜色定义 -->
+	<Color name="Comment" foreground="Green" />
+	<Color name="String" foreground="Brown" />
+	<Color name="Attribute" foreground="Red" />
+	<Color name="Tag" foreground="Blue" fontWeight="bold" />
+	<Color name="CData" foreground="Gray" />
+	<Color name="Entity" foreground="Red" />
+	<Color name="Namespace" foreground="DarkCyan" />
+	<Color name="MarkupExtension" foreground="DarkOrange" fontWeight="bold" />
+
+	<RuleSet>
+		<!-- XML 声明 -->
+		<Span color="Comment" multiline="true">
+			<Begin>&lt;\?</Begin>
+			<End>\?&gt;</End>
+		</Span>
+
+		<!-- 注释 -->
+		<Span color="Comment" multiline="true">
+			<Begin>&lt;!--</Begin>
+			<End>--&gt;</End>
+		</Span>
+
+		<!-- CDATA -->
+		<Span color="CData" multiline="true">
+			<Begin>&lt;!\[CDATA\[</Begin>
+			<End>]]&gt;</End>
+		</Span>
+
+		<!-- 开始标签和结束标签 -->
+		<Span color="Tag" multiline="true">
+			<Begin>&lt;/?[a-zA-Z_][a-zA-Z0-9_:.]*</Begin>
+			<End>/&gt;|&gt;</End>
+			<RuleSet>
+				<!-- 命名空间声明 -->
+				<Rule color="Namespace">
+					\s+xmlns(:[a-zA-Z_][a-zA-Z0-9_]*)?\s*=\s*
+				</Rule>
+
+				<!-- 双引号字符串 -->
+				<Span color="String" multiline="false">
+					<Begin>"</Begin>
+					<End>"</End>
+					<RuleSet>
+						<Span begin="&amp;" end=";"/>
+					</RuleSet>
+				</Span>
+
+				<!-- 单引号字符串 -->
+				<Span color="String" multiline="false">
+					<Begin>'</Begin>
+					<End>'</End>
+				</Span>
+
+				<!-- 属性名 -->
+				<Rule color="Attribute">
+					\s+[a-zA-Z_][a-zA-Z0-9_:.]*\s*=\s*
+				</Rule>
+
+				<!-- 标记扩展 -->
+				<Span color="MarkupExtension" multiline="false">
+					<Begin>\{</Begin>
+					<End>\}</End>
+				</Span>
+
+				<!-- 实体引用 -->
+				<Rule color="Entity">
+					&amp;[a-zA-Z][a-zA-Z0-9]*;
+				</Rule>
+
+				<!-- 数字实体 -->
+				<Rule color="Entity">
+					&amp;#[0-9]+;
+				</Rule>
+			</RuleSet>
+		</Span>
+	</RuleSet>
+</SyntaxDefinition>
