@@ -1,0 +1,45 @@
+<UserControl
+    x:Class="TextFlowPlus.Views.CryptoView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Padding="10">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="100,*">
+            <!-- 操作类型 -->
+            <TextBlock x:Name="OperationTypeLabel" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,8">操作类型:</TextBlock>
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+                <RadioButton x:Name="EncryptRadio" Content="加密" IsChecked="True" GroupName="Operation" />
+                <RadioButton x:Name="DecryptRadio" Content="解密" GroupName="Operation" />
+            </StackPanel>
+
+            <!-- 算法选择 -->
+            <TextBlock x:Name="AlgorithmLabel" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,8">加密算法:</TextBlock>
+            <ComboBox x:Name="AlgorithmComboBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,8">
+                <ComboBoxItem Content="AES" IsSelected="True" />
+                <ComboBoxItem Content="ChaCha20" />
+                <ComboBoxItem Content="DES" />
+                <ComboBoxItem Content="3DES" />
+            </ComboBox>
+
+            <!-- 文件路径 -->
+            <TextBlock x:Name="SelectFileLabel" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,8">选择文件:</TextBlock>
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="0,0,0,8">
+                <TextBox x:Name="FilePathTextBox" IsReadOnly="True" Width="250" />
+                <Button x:Name="BrowseButton" Content="浏览..." Click="BrowseButton_Click" Width="70" />
+            </StackPanel>
+
+            <!-- 密钥输入 -->
+            <TextBlock x:Name="KeyLabel" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,8">密钥:</TextBlock>
+            <TextBox x:Name="KeyTextBox" Grid.Row="3" Grid.Column="1" PlaceholderText="请输入密钥" Margin="0,0,0,8" />
+
+            <!-- 状态提示 -->
+            <TextBlock x:Name="StatusTextBlock" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Foreground="#007bff" FontSize="12" Margin="0,0,0,8" />
+
+            <!-- 按钮 -->
+            <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button x:Name="ExecuteButton" Content="执行" Click="ExecuteButton_Click" Width="80" HorizontalContentAlignment="Center" />
+                <Button x:Name="CancelButton" Content="取消" Click="CancelButton_Click" Width="80" HorizontalContentAlignment="Center" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

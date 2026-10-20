@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="Proto"
+                  extensions=".proto"
+                  xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+    <Color name="Comment" foreground="#008000" />
+    <Color name="String" foreground="#A05000" />
+    <Color name="Keyword" foreground="#0000FF" fontWeight="bold" />
+    <Color name="Type" foreground="#2B91AF" />
+    <Color name="Number" foreground="#0000FF" />
+    <Color name="Operator" foreground="#000000" />
+    <Color name="Modifier" foreground="#800080" fontWeight="bold" />
+
+    <RuleSet>
+        <!-- Comments -->
+        <Span color="Comment">
+            <Begin>//</Begin>
+        </Span>
+        <Span color="Comment">
+            <Begin>/\*</Begin>
+            <End>\*/</End>
+        </Span>
+
+        <!-- Strings -->
+        <Span color="String">
+            <Begin>"</Begin>
+            <End>"</End>
+            <RuleSet>
+                <Span begin="\\" end="."/>
+            </RuleSet>
+        </Span>
+        <Span color="String">
+            <Begin>'</Begin>
+            <End>'</End>
+            <RuleSet>
+                <Span begin="\\" end="."/>
+            </RuleSet>
+        </Span>
+
+        <!-- Keywords -->
+        <Keywords color="Keyword">
+            <Word>syntax</Word>
+            <Word>package</Word>
+            <Word>import</Word>
+            <Word>option</Word>
+            <Word>service</Word>
+            <Word>rpc</Word>
+            <Word>returns</Word>
+            <Word>message</Word>
+            <Word>enum</Word>
+            <Word>oneof</Word>
+            <Word>map</Word>
+            <Word>reserved</Word>
+            <Word>to</Word>
+            <Word>stream</Word>
+        </Keywords>
+
+        <!-- Field modifiers -->
+        <Keywords color="Modifier">
+            <Word>optional</Word>
+            <Word>repeated</Word>
+            <Word>required</Word>
+        </Keywords>
+
+        <!-- Primitive types -->
+        <Keywords color="Type">
+            <Word>double</Word>
+            <Word>float</Word>
+            <Word>int32</Word>
+            <Word>int64</Word>
+            <Word>uint32</Word>
+            <Word>uint64</Word>
+            <Word>sint32</Word>
+            <Word>sint64</Word>
+            <Word>fixed32</Word>
+            <Word>fixed64</Word>
+            <Word>sfixed32</Word>
+            <Word>sfixed64</Word>
+            <Word>bool</Word>
+            <Word>string</Word>
+            <Word>bytes</Word>
+        </Keywords>
+
+        <!-- Numbers -->
+        <Rule color="Number">\b0[xX][0-9a-fA-F]+\b</Rule>
+        <Rule color="Number">\b\d+\.?\d*(?:[eE][+-]?\d+)?\b</Rule>
+        <Rule color="Number">\b\d+\b</Rule>
+
+        <!-- Operators -->
+        <Rule color="Operator">[=;,\[\]{}&lt;&gt;]</Rule>
+        <Rule color="Operator">-\&gt;</Rule>
+    </RuleSet>
+</SyntaxDefinition>

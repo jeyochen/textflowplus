@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  日志格式（如 log4net 默认布局）：
+    [2026-09-08 08:47:14,830][TID:1][INFO ][Athena.DAL.GrpcGlobal:43]:Grpc connect to 192.2.2.206:52119
+    时间戳                 线程      级别     来源(类型:行号)           消息正文
+  实现要点：Span 的颜色会覆盖整个 span 区间（含 begin 定界符，XSHD 也没有 beginColor 属性），
+            且字重会一并作用于区间内所有未命中的文本。所以正文着色用「零宽后行断言」作为
+            Span 起点，从级别标签之后开始，标签本身仍由规则着色，才能保持加粗。
+-->
+<SyntaxDefinition name="Log"
+                  extensions=".log"
+                  xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+    <!-- 结构化前缀 -->
+    <Color name="LogTimestamp" foreground="#808080" />
+    <Color name="LogThreadId" foreground="#008080" />
+    <Color name="LogSource" foreground="#0000FF" />
+    <Color name="LogMessageMark" foreground="#808080" />
+
+    <!-- 级别标签 -->
+    <Color name="LogLevelError" foreground="#CC0000" fontWeight="bold" />
+    <Color name="LogLevelWarn" foreground="#B36B00" fontWeight="bold" />
+    <Color name="LogLevelInfo" foreground="#008000" />
+    <Color name="LogLevelDebug" foreground="#808080" />
+
+    <!-- 错误/警告行的消息正文 -->
+    <Color name="LogErrorText" foreground="#B00020" />
+    <Color name="LogWarnText" foreground="#8A5A00" />
+
+    <RuleSet>
+        <!-- [2026-09-08 00:26:50,561] 时间戳 -->
+        <Rule color="LogTimestamp">\[\d{4}-\d{2}-\d{2}[ T]\d{1,2}:\d{2}:\d{2}(?:[,.]\d{1,7})?\]</Rule>
+        <!-- 2026-09-08 00:26:50,561 不带方括号的时间戳（行首） -->
+        <Rule color="LogTimestamp">^\d{4}-\d{2}-\d{2}[ T]\d{1,2}:\d{2}:\d{2}(?:[,.]\d{1,7})?</Rule>
+        <!-- [TID:60] 线程 -->
+        <Rule color="LogThreadId">\[TID:\d+\]</Rule>
+        <!-- 级别标签 -->
+        <Rule color="LogLevelError">\[\s*(?:ERROR|FATAL|CRITICAL|SEVERE)\s*\]</Rule>
+        <Rule color="LogLevelWarn">\[\s*(?:WARN|WARNING)\s*\]</Rule>
+        <Rule color="LogLevelInfo">\[\s*(?:INFO|NOTICE)\s*\]</Rule>
+        <Rule color="LogLevelDebug">\[\s*(?:DEBUG|TRACE|VERBOSE)\s*\]</Rule>
+        <!-- [Athena.App.Models.PatientModel.HeartbeatManager+&lt;&gt;c:83]: 来源（类型:行号） -->
+        <Rule color="LogSource">\[[A-Za-z_][A-Za-z0-9_.+&lt;&gt;$@`\-]*:\d+\]\s*:\s*</Rule>
+        <!-- >>> 消息标记 -->
+        <Rule color="LogMessageMark">&gt;&gt;&gt;</Rule>
+
+        <!-- 错误/警告行：正文整体按级别着色，来源与标记在 span 内重新着色 -->
+        <Span color="LogErrorText" multiline="false">
+            <Begin>(?&lt;=\[\s*(?:ERROR|FATAL|CRITICAL|SEVERE)\s*\])</Begin>
+            <End>$</End>
+            <RuleSet>
+                <Rule color="LogSource">\[[A-Za-z_][A-Za-z0-9_.+&lt;&gt;$@`\-]*:\d+\]\s*:\s*</Rule>
+                <Rule color="LogMessageMark">&gt;&gt;&gt;</Rule>
+            </RuleSet>
+        </Span>
+        <Span color="LogWarnText" multiline="false">
+            <Begin>(?&lt;=\[\s*(?:WARN|WARNING)\s*\])</Begin>
+            <End>$</End>
+            <RuleSet>
+                <Rule color="LogSource">\[[A-Za-z_][A-Za-z0-9_.+&lt;&gt;$@`\-]*:\d+\]\s*:\s*</Rule>
+                <Rule color="LogMessageMark">&gt;&gt;&gt;</Rule>
+            </RuleSet>
+        </Span>
+    </RuleSet>
+</SyntaxDefinition>

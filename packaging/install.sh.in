@@ -1,0 +1,230 @@
+#!/usr/bin/env bash
+# =============================================================================
+#  @APP_NAME@（@APP_NAME_ZH@）Ubuntu 安装 / 卸载脚本
+#  版本：@APP_VERSION@    架构：@BUNDLE_RID@    框架：@TFM@
+#
+#  用法：
+#    sudo ./install.sh                       安装到 /usr/local/@APP_ID@，并创建应用菜单项
+#    ./install.sh --user                     免 root，安装到 ~/.local（仅当前用户）
+#    sudo ./install.sh --prefix /opt/@APP_ID@   自定义安装目录
+#    sudo ./install.sh --uninstall           卸载程序本体、命令软链与菜单项
+#    ./install.sh --help                     查看帮助
+# =============================================================================
+
+set -euo pipefail
+
+APP_ID="@APP_ID@"
+APP_NAME="@APP_NAME@"
+APP_NAME_ZH="@APP_NAME_ZH@"
+APP_VERSION="@APP_VERSION@"
+EXE_NAME="@EXE_NAME@"
+BUNDLE_RID="@BUNDLE_RID@"
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SOURCE_DIR="$SCRIPT_DIR/app"
+ICON_SOURCE="$SCRIPT_DIR/icon.png"
+
+if [[ -t 1 ]]; then
+    C_RED=$'\033[31m'; C_GREEN=$'\033[32m'; C_YELLOW=$'\033[33m'
+    C_CYAN=$'\033[36m'; C_BOLD=$'\033[1m'; C_RESET=$'\033[0m'
+else
+    C_RED=""; C_GREEN=""; C_YELLOW=""; C_CYAN=""; C_BOLD=""; C_RESET=""
+fi
+
+info() { printf '%s[信息]%s %s\n' "$C_CYAN"   "$C_RESET" "$*"; }
+ok()   { printf '%s[完成]%s %s\n' "$C_GREEN"  "$C_RESET" "$*"; }
+warn() { printf '%s[警告]%s %s\n' "$C_YELLOW" "$C_RESET" "$*" >&2; }
+die()  { printf '%s[错误]%s %s\n' "$C_RED" "$C_RESET" "$*" >&2; exit 1; }
+
+usage() {
+    awk '/^# ==========/{n++; if (n==2) {print; exit}} n>=1' "${BASH_SOURCE[0]}" \
+        | sed 's/^# \{0,1\}//'
+}
+
+MODE="system"      # system | user
+PREFIX=""
+DO_UNINSTALL=0
+
+while (($#)); do
+    case "$1" in
+        -h|--help)        usage; exit 0 ;;
+        --user)           MODE="user" ;;
+        --prefix)         shift; [[ $# -gt 0 ]] || die "--prefix 需要一个目录路径"; PREFIX="$1" ;;
+        --prefix=*)       PREFIX="${1#*=}" ;;
+        --uninstall|-u)   DO_UNINSTALL=1 ;;
+        *)                die "未知参数：$1（使用 --help 查看用法）" ;;
+    esac
+    shift
+done
+
+# 指定了自定义目录时，按目录归属推断是系统安装还是用户安装
+if [[ -n "$PREFIX" && "$PREFIX" == "$HOME"* ]]; then
+    MODE="user"
+fi
+
+# 未显式指定模式时：非 root 且存在用户级安装 → 按用户级处理
+# （这样 ./install.sh --uninstall 能直接卸载 --user 安装的版本）
+if [[ -z "$PREFIX" && "$MODE" == "system" && "${EUID:-$(id -u)}" -ne 0 \
+      && -d "$HOME/.local/share/$APP_ID" ]]; then
+    MODE="user"
+    info "检测到用户级安装（$HOME/.local/share/$APP_ID），按 --user 模式处理"
+fi
+
+if [[ "$MODE" == "system" ]]; then
+    if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
+        if (( DO_UNINSTALL )); then
+            die "卸载系统安装需要 root 权限：请使用 sudo ./install.sh --uninstall
+    若是用 --user 安装的，请改用： ./install.sh --uninstall --user"
+        fi
+        die "安装到系统目录需要 root 权限：请使用 sudo ./install.sh
+    若不想用 root，可改用： ./install.sh --user"
+    fi
+    PREFIX="${PREFIX:-/usr/local/$APP_ID}"
+    BIN_DIR="/usr/local/bin"
+    DESKTOP_DIR="/usr/share/applications"
+    ICON_ROOT="/usr/share/icons/hicolor"
+else
+    PREFIX="${PREFIX:-$HOME/.local/share/$APP_ID}"
+    BIN_DIR="$HOME/.local/bin"
+    DESKTOP_DIR="$HOME/.local/share/applications"
+    ICON_ROOT="$HOME/.local/share/icons/hicolor"
+fi
+
+DESKTOP_FILE="$DESKTOP_DIR/$APP_ID.desktop"
+BIN_LINK="$BIN_DIR/$APP_ID"
+
+refresh_desktop_db() {
+    command -v update-desktop-database >/dev/null 2>&1 && \
+        update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true
+}
+
+# 刷新 GTK 图标主题缓存 —— 这一步不能省。
+# hicolor 下若已存在 icon-theme.cache，GTK 会直接信任该缓存；只把 png 拷进目录
+# 而不刷新缓存，图标名会查找失败，GNOME 便回退到默认的齿轮图标
+# （application-x-executable），表现为「菜单和顶栏都没有程序图标」。
+refresh_icon_cache() {
+    [[ -f "$ICON_ROOT/index.theme" ]] || return 0
+    if ! command -v gtk-update-icon-cache >/dev/null 2>&1; then
+        warn "未找到 gtk-update-icon-cache；若图标不显示，请手动执行：
+        gtk-update-icon-cache -f -t $ICON_ROOT"
+        return 0
+    fi
+    if gtk-update-icon-cache -f -t "$ICON_ROOT" >/dev/null 2>&1; then
+        info "已刷新图标缓存：$ICON_ROOT"
+    else
+        warn "刷新图标缓存失败（$ICON_ROOT）；若图标不显示，请手动执行：
+        gtk-update-icon-cache -f -t $ICON_ROOT"
+    fi
+}
+
+# 已安装的全部图标文件路径
+installed_icons() {
+    local d
+    for d in "$ICON_ROOT"/*x*/apps; do
+        [[ -d "$d" ]] && printf '%s\n' "$d/$APP_ID.png"
+    done
+}
+
+# 安装图标：优先使用包内 icons/<尺寸>.png（多尺寸，HiDPI 更清晰），
+# 缺失时退回单张 icon.png。
+install_icons() {
+    local -a srcs=()
+    local f base size dest_dir
+    for f in "$SCRIPT_DIR"/icons/*.png; do
+        [[ -f "$f" ]] && srcs+=("$f")
+    done
+    if (( ${#srcs[@]} == 0 )) && [[ -f "$ICON_SOURCE" ]]; then
+        srcs=("$ICON_SOURCE")
+    fi
+    if (( ${#srcs[@]} == 0 )); then
+        warn "安装包内未找到图标文件，跳过图标安装"
+        return 0
+    fi
+
+    for f in "${srcs[@]}"; do
+        base="$(basename "$f")"
+        size="${base%.png}"
+        if [[ "$size" =~ ^[0-9]+$ ]]; then
+            dest_dir="$ICON_ROOT/${size}x${size}/apps"
+        else
+            dest_dir="$ICON_ROOT/256x256/apps"     # 兜底（icon.png）
+        fi
+        mkdir -p "$dest_dir"
+        cp -a "$f" "$dest_dir/$APP_ID.png"
+    done
+    info "已安装图标：${#srcs[@]} 个尺寸"
+}
+
+# ------------------------------------------------------------------ 卸载 --
+if (( DO_UNINSTALL )); then
+    info "卸载 $APP_NAME（目录：$PREFIX）"
+    rm -rf "$PREFIX"
+    rm -f "$BIN_LINK" "$DESKTOP_FILE"
+    while IFS= read -r icon; do rm -f "$icon"; done < <(installed_icons)
+    refresh_desktop_db
+    refresh_icon_cache
+    ok "已卸载。用户配置（如 ~/.config 下的设置）未删除，如需彻底清理请手动处理。"
+    exit 0
+fi
+
+# ------------------------------------------------------------------ 安装 --
+[[ -d "$SOURCE_DIR" ]] || die "安装包不完整：未找到程序目录 $SOURCE_DIR"
+[[ -f "$SOURCE_DIR/$EXE_NAME" ]] || die "安装包不完整：未找到可执行文件 $SOURCE_DIR/$EXE_NAME"
+
+info "安装 $APP_NAME $APP_VERSION（$BUNDLE_RID）"
+info "安装目录：$PREFIX"
+
+# 1) 复制程序本体
+rm -rf "$PREFIX"
+mkdir -p "$PREFIX"
+cp -a "$SOURCE_DIR/." "$PREFIX/"
+chmod +x "$PREFIX/$EXE_NAME"
+
+# 2) 命令软链
+mkdir -p "$BIN_DIR"
+ln -sf "$PREFIX/$EXE_NAME" "$BIN_LINK"
+
+# 3) 图标（多尺寸）+ 刷新图标主题缓存
+install_icons
+refresh_icon_cache
+
+# 4) 应用菜单项
+mkdir -p "$DESKTOP_DIR"
+cat > "$DESKTOP_FILE" <<DESKTOP_EOF
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=$APP_NAME
+Name[zh_CN]=$APP_NAME_ZH
+Comment=AI-powered code editor
+Comment[zh_CN]=AI 驱动的代码编辑器
+Exec=$PREFIX/$EXE_NAME %F
+Icon=$APP_ID
+Terminal=false
+Categories=Development;TextEditor;IDE;Utility;
+MimeType=text/plain;text/x-csrc;text/x-python;application/json;
+StartupNotify=true
+StartupWMClass=$EXE_NAME
+DESKTOP_EOF
+chmod 644 "$DESKTOP_FILE"
+refresh_desktop_db
+
+# 5) 运行期依赖自检（仅提示，不阻断）
+missing_libs="$(ldd "$PREFIX/$EXE_NAME" 2>/dev/null | awk '/not found/{print $1}' | sort -u || true)"
+if [[ -n "$missing_libs" ]]; then
+    warn "以下动态库缺失，程序可能无法启动："
+    printf '        %s\n' $missing_libs >&2
+    warn "Ubuntu 可尝试： sudo apt install libx11-6 libice6 libsm6 libfontconfig1 libfreetype6 libxext6 libxrandr2 libxi6 libxcursor1 libgl1 libegl1"
+fi
+
+ok "安装完成：$PREFIX"
+printf '\n'
+printf '  %s启动方式：%s\n' "$C_BOLD" "$C_RESET"
+printf '    应用菜单中搜索 “%s”\n' "$APP_NAME"
+printf '    或在终端执行： %s\n' "$APP_ID"
+printf '\n'
+printf '  %s卸载：%s %s --uninstall\n' "$C_BOLD" "$C_RESET" "$( [[ "$MODE" == "system" ]] && printf 'sudo ./install.sh' || printf './install.sh' )"
+
+if [[ "$MODE" == "user" && ":$PATH:" != *":$BIN_DIR:"* ]]; then
+    warn "$BIN_DIR 不在 PATH 中，直接执行 $APP_ID 前请先把该目录加入 PATH。"
+fi

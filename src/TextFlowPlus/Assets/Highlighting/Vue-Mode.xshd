@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Vue 单文件组件（SFC）语法高亮定义。
+
+    ⚠️ 维护注意：XSHD 的规则/表达式是以 RegexOptions.IgnorePatternWhitespace 编译的，
+    因此模式中的 “#” 会被当作「行注释」的起始符，其后的内容全部被忽略。
+    例如 <Rule># [a-zA-Z-]+</Rule> 会被编译成空正则，运行时 AvaloniaEdit 抛出
+    “A highlighting rule matched 0 characters, which would cause an endless loop.”
+    并直接终止进程（打开 .vue 文件即崩溃）。
+    凡是需要匹配字面量 “#”，必须转义写成 “\#”。
+    同理，任何能匹配零个字符的规则（例如用 “*” 修饰整条规则）都会触发同一异常。
+-->
+<SyntaxDefinition name="Vue"
+                  extensions=".vue"
+                  xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+    <Color name="Comment" foreground="#008000" />
+    <Color name="String" foreground="#A31515" />
+    <Color name="Keyword" foreground="#0000FF" fontWeight="bold" />
+    <Color name="Number" foreground="#098658" />
+    <Color name="Tag" foreground="#800080" fontWeight="bold" />
+    <Color name="Attribute" foreground="#FF0000" />
+    <Color name="Directive" foreground="#795E26" fontWeight="bold" />
+    <Color name="Interpolation" foreground="#2B91AF" fontWeight="bold" />
+    <Color name="Operator" foreground="#000000" />
+    <Color name="Entity" foreground="#808080" />
+    <Color name="CssSelector" foreground="#800000" fontWeight="bold" />
+    <Color name="CssProperty" foreground="#FF0000" />
+    <Color name="CssValue" foreground="#0000FF" />
+
+    <RuleSet>
+        <!-- HTML 注释 -->
+        <Span color="Comment" multiline="true">
+            <Begin>&lt;!--</Begin>
+            <End>--&gt;</End>
+        </Span>
+
+        <!-- <script> 段：按 JS / TS 规则着色（含 <script setup lang="ts">） -->
+        <Span color="Tag" ruleSet="ScriptContent" multiline="true">
+            <Begin>&lt;script(\s[^&gt;]*)?&gt;</Begin>
+            <End>&lt;/script&gt;</End>
+        </Span>
+
+        <!-- <style> 段：按 CSS 规则着色（含 <style scoped lang="scss">） -->
+        <Span color="Tag" ruleSet="StyleContent" multiline="true">
+            <Begin>&lt;style(\s[^&gt;]*)?&gt;</Begin>
+            <End>&lt;/style&gt;</End>
+        </Span>
+
+        <!-- 开始标签（内部交给 InsideTag 处理属性与指令） -->
+        <Span color="Tag" ruleSet="InsideTag">
+            <Begin>&lt;[a-zA-Z][a-zA-Z0-9._-]*</Begin>
+            <End>&gt;</End>
+        </Span>
+
+        <!-- 结束标签 -->
+        <Span color="Tag">
+            <Begin>&lt;/[a-zA-Z][a-zA-Z0-9._-]*</Begin>
+            <End>&gt;</End>
+        </Span>
+
+        <!-- 插值 {{ ... }} -->
+        <Span color="Interpolation" multiline="true">
+            <Begin>\{\{</Begin>
+            <End>\}\}</End>
+        </Span>
+
+        <!-- HTML 实体（注意 & 和 # 都要转义） -->
+        <Rule color="Entity">&amp;[a-zA-Z]+;|&amp;\#[0-9]+;|&amp;\#x[0-9a-fA-F]+;</Rule>
+    </RuleSet>
+
+    <RuleSet name="InsideTag">
+        <!-- 带值的属性：v-model / :class / @click / #header / class / data-id 等 -->
+        <Span color="Attribute">
+            <Begin>[a-zA-Z_@:\#][a-zA-Z0-9_.:@\#-]*(?=\s*=)</Begin>
+            <End>=</End>
+        </Span>
+
+        <!-- 无值指令与修饰符：v-else / v-cloak / @click.stop / :disabled 等 -->
+        <Rule color="Directive">v-[a-zA-Z0-9_.-]+|[@:\#][a-zA-Z0-9_.-]+</Rule>
+
+        <!-- 属性值 -->
+        <Span color="String">
+            <Begin>"</Begin>
+            <End>"</End>
+        </Span>
+        <Span color="String">
+            <Begin>'</Begin>
+            <End>'</End>
+        </Span>
+
+        <!-- 标签收尾 -->
+        <Rule color="Operator">[/&gt;]</Rule>
+    </RuleSet>
+
+    <RuleSet name="ScriptContent">
+        <!-- 注释 -->
+        <Span color="Comment" multiline="true">
+            <Begin>/\*</Begin>
+            <End>\*/</End>
+        </Span>
+        <Span color="Comment">
+            <Begin>//</Begin>
+        </Span>
+
+        <!-- 字符串（内嵌转义规则，避免 \" 提前结束字符串） -->
+        <Span color="String">
+            <Begin>"</Begin>
+            <End>"</End>
+            <RuleSet>
+                <Span begin="\\" end="." />
+            </RuleSet>
+        </Span>
+        <Span color="String">
+            <Begin>'</Begin>
+            <End>'</End>
+            <RuleSet>
+                <Span begin="\\" end="." />
+            </RuleSet>
+        </Span>
+        <Span color="String" multiline="true">
+            <Begin>`</Begin>
+            <End>`</End>
+            <RuleSet>
+                <Span begin="\\" end="." />
+            </RuleSet>
+        </Span>
+
+        <Rule color="Number">[0-9]+(\.[0-9]+)?</Rule>
+        <Rule color="Keyword">\b(import|from|export|default|const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|new|delete|typeof|instanceof|in|of|class|extends|super|this|try|catch|finally|throw|async|await|yield|static|get|set|true|false|null|undefined|void|interface|type|enum|implements|public|private|protected|readonly|as|is|keyof|infer|declare|namespace|module|abstract|ref|reactive|computed|watch|watchEffect|onMounted|onUnmounted|props|emit|defineProps|defineEmits|defineExpose|withDefaults)\b</Rule>
+        <Rule color="Operator">===|!==|==|!=|=&gt;|&lt;=|&gt;=|\|\||&amp;&amp;|\?\?|\.\.\.|[-+*/%&amp;|^~!&lt;&gt;?:=]</Rule>
+    </RuleSet>
+
+    <RuleSet name="StyleContent">
+        <!-- 注释 -->
+        <Span color="Comment" multiline="true">
+            <Begin>/\*</Begin>
+            <End>\*/</End>
+        </Span>
+
+        <Span color="String">
+            <Begin>"</Begin>
+            <End>"</End>
+        </Span>
+        <Span color="String">
+            <Begin>'</Begin>
+            <End>'</End>
+        </Span>
+
+        <!-- 伪类 / at-规则 -->
+        <Rule color="CssSelector">::?[a-zA-Z-]+|@[a-zA-Z-]+</Rule>
+        <!-- 类选择器 / id 选择器（# 必须转义） -->
+        <Rule color="CssSelector">[.\#][a-zA-Z_-][a-zA-Z0-9_-]*</Rule>
+        <!-- 属性名 -->
+        <Rule color="CssProperty">[a-zA-Z-]+(?=\s*:)</Rule>
+        <!-- 颜色值（# 必须转义） -->
+        <Rule color="CssValue">\#[0-9a-fA-F]{3,8}</Rule>
+        <!-- 数值与单位 -->
+        <Rule color="Number">[0-9]+(\.[0-9]+)?(px|em|rem|vh|vw|vmin|vmax|%|s|ms|deg|fr)?</Rule>
+    </RuleSet>
+</SyntaxDefinition>

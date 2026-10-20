@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TextFlowPlus · T+ Logo 展示</title>
+<style>
+  :root {
+    --bg: #f4f6fb; --card: #ffffff; --ink: #0f172a; --muted: #64748b;
+    --violet: #7C3AED; --indigo: #4F46E5; --cyan: #06B6D4; --amber: #FBBF24;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; background: var(--bg); color: var(--ink); padding: 48px 24px 80px; }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 48px; }
+  header h1 { font-size: 34px; font-weight: 700; letter-spacing: .5px; }
+  header h1 em { font-style: normal; background: linear-gradient(90deg, var(--violet), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  header p { color: var(--muted); margin-top: 10px; font-size: 15px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .card { background: var(--card); border-radius: 16px; padding: 32px; box-shadow: 0 4px 24px rgba(15,23,42,.07); }
+  .card h2 { font-size: 17px; margin-bottom: 18px; }
+  .card .desc { color: var(--muted); font-size: 13px; margin-top: 14px; line-height: 1.7; }
+  .show { display: flex; align-items: center; justify-content: center; min-height: 200px; border-radius: 12px; }
+  .show.light { background: #f1f5f9; }
+  .show.dark { background: #0b1220; }
+  img { max-width: 100%; }
+  .row { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
+  .concept { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 6px; }
+  .concept .item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; }
+  .concept .letter { font-size: 30px; font-weight: 800; margin-bottom: 8px; }
+  .concept .item p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .palette { display: flex; gap: 14px; margin-top: 8px; }
+  .swatch { flex: 1; border-radius: 10px; height: 44px; position: relative; }
+  .swatch span { position: absolute; left: 8px; bottom: 6px; font-size: 11px; font-weight: 600; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+  .files { font-size: 13px; color: var(--muted); line-height: 2; }
+  .files code { background: #f1f5f9; border-radius: 6px; padding: 2px 7px; font-size: 12px; color: var(--violet); }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 48px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>TextFlowPlus · <em>T+</em> 品牌标识</h1>
+    <p>一个支持 Agent 的多功能编辑器的专属 Logo —— 蓝框内的 T+（透明底）</p>
+  </header>
+
+  <!-- 主图标 -->
+  <div class="grid">
+    <div class="card">
+      <h2>应用图标（icon.svg）</h2>
+      <div class="show dark"><img src="icon.svg" alt="T+ icon" style="width:200px;height:200px"></div>
+      <p class="desc">蓝描边方框（海蓝对角线渐变 #5CC0FF → #1E7BE0 → #0B4EA2）内放 T 与 +，二者分离不重叠；框内透明，可叠加任意底色；T 用亮海蓝→深海洋蓝渐变，+ 为琥珀色渐变；不叠加投影，小尺寸下依旧干净锐利。</p>
+    </div>
+    <div class="card">
+      <h2>设计概念</h2>
+      <div class="concept">
+        <div class="item"><div class="letter" style="color:var(--violet)">A</div><p>AI 之峰：几何三角，棱角分明，代表智能与稳定。</p></div>
+        <div class="item"><div class="letter" style="color:var(--amber)">I</div><p>编辑光标：唯一的强调色，一眼认出"编辑器"身份。</p></div>
+        <div class="item"><div class="letter" style="color:var(--cyan)">E</div><p>文本三行：文档与代码的抽象，向右敞开如流动的文字。</p></div>
+        <div class="item"><div class="letter" style="color:var(--cyan)">✦</div><p>AI 火花：悬于光标之上，点明 Agent / 智能加持。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 标识变体 -->
+  <div class="grid" style="margin-top:24px">
+    <div class="card">
+      <h2>彩色标识 · 浅色背景（mark-color.svg）</h2>
+      <div class="show light"><img src="mark-color.svg" alt="mark color" style="width:180px"></div>
+    </div>
+    <div class="card">
+      <h2>白色标识 · 深色背景（mark-white.svg）</h2>
+      <div class="show dark"><img src="mark-white.svg" alt="mark white" style="width:180px"></div>
+    </div>
+    <div class="card">
+      <h2>完整标识 · 浅色（lockup-light.svg）</h2>
+      <div class="show light"><img src="lockup-light.svg" alt="lockup light" style="width:320px"></div>
+    </div>
+    <div class="card">
+      <h2>完整标识 · 深色（lockup-dark.svg）</h2>
+      <div class="show dark"><img src="lockup-dark.svg" alt="lockup dark" style="width:320px"></div>
+    </div>
+  </div>
+
+  <!-- 尺寸阶梯 -->
+  <div class="grid" style="margin-top:24px">
+    <div class="card">
+      <h2>尺寸阶梯（icon-*.png）</h2>
+      <div class="show dark row">
+        <img src="icon-256.png" style="width:64px;height:64px">
+        <img src="icon-128.png" style="width:48px;height:48px">
+        <img src="icon-64.png" style="width:32px;height:32px">
+        <img src="icon-32.png" style="width:24px;height:24px">
+        <img src="icon-32.png" style="width:16px;height:16px">
+      </div>
+      <p class="desc">512 / 256 / 192 / 128 / 64 / 32 px 六档，小尺寸下仍清晰可辨（aie.ico 内嵌 256→16 六档）。</p>
+    </div>
+    <div class="card">
+      <h2>品牌色板</h2>
+      <div class="palette">
+        <div class="swatch" style="background:#5CC0FF"><span>#5CC0FF</span></div>
+        <div class="swatch" style="background:#1E7BE0"><span>#1E7BE0</span></div>
+        <div class="swatch" style="background:#0B4EA2"><span>#0B4EA2</span></div>
+        <div class="swatch" style="background:#FBBF24"><span>#FBBF24</span></div>
+        <div class="swatch" style="background:#0F172A"><span>#0F172A</span></div>
+      </div>
+      <p class="desc">海蓝三色渐变构成描边方框（冷静深邃，象征可靠与流动）；框内透明不占底色；琥珀色的 + 是全图唯一暖色强调。</p>
+    </div>
+  </div>
+
+  <!-- 文件清单 -->
+  <div class="grid" style="margin-top:24px">
+    <div class="card">
+      <h2>文件清单</h2>
+      <div class="files">
+        <code>icon.svg / icon-*.png</code> 应用图标<br>
+        <code>mark-color.svg / png</code> 标识（浅色背景）<br>
+        <code>mark-white.svg / png</code> 标识（深色背景）<br>
+        <code>lockup-light|dark.svg / png / @2x.png</code> 标识+字标<br>
+        <code>aie.ico</code> Windows / 浏览器多尺寸图标<br>
+        <code>render-logo.ps1</code> 一键重新渲染全部位图<br>
+      </div>
+    </div>
+    <div class="card">
+      <h2>识别要点</h2>
+      <p class="desc" style="margin-top:0">
+        • 两笔零装饰、粗圆角几何，32px 小图标下依旧可辨；<br>
+        • "T+"——Text 与 Plus 的直接表达，字母即产品定位；<br>
+        • 纵向明→暗渐变与投影模拟顶光，让标识"立"起来，与市面上扁平的 AI 图标区分；<br>
+        • 蓝框界定出"编辑画布"，T 与 + 完全分离、互不重叠，两个符号各自完整；<br>
+        • 琥珀色的 + 是全图唯一强调色，色彩记忆点集中在"海蓝 + 琥珀"。
+      </p>
+    </div>
+  </div>
+
+  <footer>TextFlowPlus · T+ Brand Mark · 2025</footer>
+</div>
+</body>
+</html>

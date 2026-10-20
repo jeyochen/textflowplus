@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="YAML"
+                  extensions=".yaml;.yml"
+                  xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+    <Color name="Comment" foreground="#008000" />
+    <Color name="StringValue" foreground="#A05000" />
+    <Color name="Key" foreground="#0000FF" fontWeight="bold" />
+    <Color name="Number" foreground="#008B8B" />
+    <Color name="Boolean" foreground="#FF0000" fontWeight="bold" />
+    <Color name="Null" foreground="#808080" />
+    <Color name="Special" foreground="#800080" />
+
+    <RuleSet>
+        <!-- Comment -->
+        <Span color="Comment">
+            <Begin>\#</Begin>
+            <End>$</End>
+        </Span>
+
+        <!-- Document markers -->
+        <Rule color="Special">^---\s*$</Rule>
+        <Rule color="Special">^\.\.\.\s*$</Rule>
+
+        <!-- Anchors and aliases -->
+        <Rule color="Special">&amp;[a-zA-Z_][a-zA-Z0-9_-]*</Rule>
+        <Rule color="Special">\*[a-zA-Z_][a-zA-Z0-9_-]*</Rule>
+        <Rule color="Special">![a-zA-Z_][a-zA-Z0-9_-]*</Rule>
+
+        <!-- Key: word at start of line followed by colon -->
+        <Rule color="Key">^[a-zA-Z_][a-zA-Z0-9_-]*(?=\s*:)</Rule>
+
+        <!-- Boolean values -->
+        <Keywords color="Boolean">
+            <Word>true</Word>
+            <Word>false</Word>
+            <Word>yes</Word>
+            <Word>no</Word>
+            <Word>on</Word>
+            <Word>off</Word>
+        </Keywords>
+
+        <!-- Null values -->
+        <Keywords color="Null">
+            <Word>null</Word>
+            <Word>~</Word>
+        </Keywords>
+
+        <!-- Numbers -->
+        <Rule color="Number">-?\d+\.\d+</Rule>
+        <Rule color="Number">-?\d+</Rule>
+
+        <!-- String values (double quoted) -->
+        <Span color="StringValue">
+            <Begin>"</Begin>
+            <End>"</End>
+        </Span>
+
+        <!-- String values (single quoted) -->
+        <Span color="StringValue">
+            <Begin>'</Begin>
+            <End>'</End>
+        </Span>
+    </RuleSet>
+</SyntaxDefinition>

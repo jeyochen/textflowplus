@@ -1,0 +1,246 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>TextFlowPlus</AssemblyName>
+    <RootNamespace>TextFlowPlus</RootNamespace>
+	<SelfContained>true</SelfContained>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+	<FileVersion>1.0.0</FileVersion>
+    <!-- macOS 发布配置 -->
+    <CFBundleName>TextFlowPlus</CFBundleName>
+    <CFBundleDisplayName>TextFlowPlus</CFBundleDisplayName>
+    <CFBundleIdentifier>com.textflowplus.app</CFBundleIdentifier>
+    <CFBundleVersion>1.0.0</CFBundleVersion>
+    <CFBundleShortVersionString>1.0.0</CFBundleShortVersionString>
+    <CFBundlePackageType>APPL</CFBundlePackageType>
+    <CFBundleSignature>????</CFBundleSignature>
+    <CFBundleExecutable>TextFlowPlus</CFBundleExecutable>
+    <CFBundleIconFile>app.icns</CFBundleIconFile>
+    <NSPrincipalClass>NSApplication</NSPrincipalClass>
+    <NSHighResolutionCapable>true</NSHighResolutionCapable>
+  </PropertyGroup>
+
+  <!-- Windows 专用：定义 VOICE_INPUT 编译常量，仅启用语音输入功能（依赖 NAudio / RNNoise / ten_vad.dll） -->
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <DefineConstants>$(DefineConstants);VOICE_INPUT</DefineConstants>
+  </PropertyGroup>
+
+  <!-- 非 Windows 平台排除语音输入实现（依赖 NAudio / RNNoise / ten_vad.dll，仅 Windows 可用） -->
+  <ItemGroup Condition="!$([MSBuild]::IsOSPlatform('Windows'))">
+    <Compile Remove="Services\Voice\**\*.cs" />
+  </ItemGroup>
+
+  <!-- ten_vad.dll：语音输入 VAD 使用，P/Invoke 动态加载，须在输出目录（与程序集同目录） -->
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <None Include="Assets\Models\ten-vad\lib\Windows\x64\ten_vad.dll" Link="ten_vad.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.2" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.2" />
+
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="12.0.0" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.1.2" />
+
+    <!-- 富文本编辑器（Avalonia Pro 控件，非商业用途免费；商业使用需付费订阅）。
+         许可证：https://avaloniaui.net/ —— 注册 Avalonia 门户获取 Community License Key:
+         <AvaloniaUILicenseKey Include="YOUR_KEY" /> -->
+    <PackageReference Include="Avalonia.Controls.RichTextEditor" Version="12.2.3" />
+    <PackageReference Include="Avalonia.Controls.Documents.Serialization.Rtf" Version="12.2.3" />
+    <PackageReference Include="Avalonia.Controls.Documents.Serialization.Docx" Version="12.2.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SSH.NET" Version="2025.1.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+    <!-- AI Agent（参考 MachineAgent）：ChatClientAgent + Ollama / OpenAI 兼容网关，跨平台 -->
+    <PackageReference Include="Microsoft.Agents.AI" Version="1.15.0" />
+    <PackageReference Include="Microsoft.Extensions.AI.Ollama" Version="9.6.0-preview.1.25310.2" />
+    <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="9.6.0-preview.1.25310.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <PackageReference Include="PaddleOCRSharp" Version="6.1.0" />
+    <PackageReference Include="System.Speech" Version="8.0.0" />
+    <!-- 语音输入：录音 + RNNoise 降噪 -->
+    <PackageReference Include="NAudio" Version="2.3.0" />
+    <PackageReference Include="YellowDogMan.RRNoise.NET" Version="0.1.9" />
+  </ItemGroup>
+
+  <!-- macOS: 从 Avalonia.Native 12.1.2 下载修复了文件对话框崩溃的原生库。
+       ⚠️ 此版本必须与上面的 Avalonia.Native PackageReference 保持一致：
+       原生库(dylib)与托管包版本错配时，IAvnWindowBase 接口调用会踩空指针，
+       表现为启动约 20~25 秒后 EXC_BAD_ACCESS / SIGSEGV（栈顶在
+       WindowBaseImpl::QueryInterfaceImpl），且没有任何托管异常输出。 -->
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <PackageDownload Include="Avalonia.Native" Version="[12.1.2]" />
+  </ItemGroup>
+
+  <!-- macOS: 用 Avalonia.Native 12.1.2 的 libAvaloniaNative.dylib 替换随包发布的版本 -->
+  <Target Name="ReplaceAvaloniaNativeDylib" AfterTargets="Build" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <PropertyGroup>
+      <AvaloniaNativeNewDylib>$(NuGetPackageRoot)avalonia.native/12.1.2/runtimes/osx/native/libAvaloniaNative.dylib</AvaloniaNativeNewDylib>
+    </PropertyGroup>
+    <Copy Condition="Exists('$(AvaloniaNativeNewDylib)')" SourceFiles="$(AvaloniaNativeNewDylib)" DestinationFiles="$(TargetDir)runtimes/osx/native/libAvaloniaNative.dylib" SkipUnchangedFiles="false" />
+    <Message Text="Replaced libAvaloniaNative.dylib with 12.1.2 version (Build)" Importance="high" />
+  </Target>
+
+  <Target Name="ReplaceAvaloniaNativeDylibForPublish" AfterTargets="Publish" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <PropertyGroup>
+      <AvaloniaNativeNewDylib>$(NuGetPackageRoot)avalonia.native/12.1.2/runtimes/osx/native/libAvaloniaNative.dylib</AvaloniaNativeNewDylib>
+    </PropertyGroup>
+    <Copy Condition="Exists('$(AvaloniaNativeNewDylib)')" SourceFiles="$(AvaloniaNativeNewDylib)" DestinationFiles="$(PublishDir)libAvaloniaNative.dylib" SkipUnchangedFiles="false" />
+    <Message Text="Replaced libAvaloniaNative.dylib with 12.1.2 version (Publish)" Importance="high" />
+  </Target>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Highlighting\JSON-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.JSON-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\XAML-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.XAML-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\Markdown-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.Markdown-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\YAML-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.YAML-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\Go-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.Go-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\Rust-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.Rust-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\Java-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.Java-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\CSS-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.CSS-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\HTML-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.HTML-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\Vue-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.Vue-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\Proto-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.Proto-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\JavaScript-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.JavaScript-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\TypeScript-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.TypeScript-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\NSIS-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.NSIS-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Highlighting\Log-Mode.xshd">
+      <LogicalName>TextFlowPlus.Highlighting.Log-Mode.xshd</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <Target Name="CopyPaddleOCRFiles" AfterTargets="Build" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\PaddleOCR.dll" DestinationFiles="$(TargetDir)PaddleOCR.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\PaddleOCR.config.json" DestinationFiles="$(TargetDir)inference\PaddleOCR.config.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\PaddleOCRStructure.config.json" DestinationFiles="$(TargetDir)inference\PaddleOCRStructure.config.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_cls_infer\inference.json" DestinationFiles="$(TargetDir)inference\yt_PP-OCRv5_mobile_cls_infer\inference.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_cls_infer\inference.pdiparams" DestinationFiles="$(TargetDir)inference\yt_PP-OCRv5_mobile_cls_infer\inference.pdiparams" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_cls_infer\inference.yml" DestinationFiles="$(TargetDir)inference\yt_PP-OCRv5_mobile_cls_infer\inference.yml" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_det_infer\inference.json" DestinationFiles="$(TargetDir)inference\yt_PP-OCRv5_mobile_det_infer\inference.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_det_infer\inference.pdiparams" DestinationFiles="$(TargetDir)inference\yt_PP-OCRv5_mobile_det_infer\inference.pdiparams" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_det_infer\inference.yml" DestinationFiles="$(TargetDir)inference\yt_PP-OCRv5_mobile_det_infer\inference.yml" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_rec_infer\inference.json" DestinationFiles="$(TargetDir)inference\yt_PP-OCRv5_mobile_rec_infer\inference.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_rec_infer\inference.pdiparams" DestinationFiles="$(TargetDir)inference\yt_PP-OCRv5_mobile_rec_infer\inference.pdiparams" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_rec_infer\inference.yml" DestinationFiles="$(TargetDir)inference\yt_PP-OCRv5_mobile_rec_infer\inference.yml" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_SLANet_plus_infer\inference.json" DestinationFiles="$(TargetDir)inference\yt_SLANet_plus_infer\inference.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_SLANet_plus_infer\inference.pdiparams" DestinationFiles="$(TargetDir)inference\yt_SLANet_plus_infer\inference.pdiparams" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_SLANet_plus_infer\inference.yml" DestinationFiles="$(TargetDir)inference\yt_SLANet_plus_infer\inference.yml" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\paddle_inference.dll" DestinationFiles="$(TargetDir)paddle_inference.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\opencv_world470.dll" DestinationFiles="$(TargetDir)opencv_world470.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\mklml.dll" DestinationFiles="$(TargetDir)mklml.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\mkldnn.dll" DestinationFiles="$(TargetDir)mkldnn.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\libiomp5md.dll" DestinationFiles="$(TargetDir)libiomp5md.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\concrt140.dll" DestinationFiles="$(TargetDir)concrt140.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\msvcp140.dll" DestinationFiles="$(TargetDir)msvcp140.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\msvcp140_1.dll" DestinationFiles="$(TargetDir)msvcp140_1.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\msvcp140_2.dll" DestinationFiles="$(TargetDir)msvcp140_2.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\vcruntime140.dll" DestinationFiles="$(TargetDir)vcruntime140.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\vcruntime140_1.dll" DestinationFiles="$(TargetDir)vcruntime140_1.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\vccorlib140.dll" DestinationFiles="$(TargetDir)vccorlib140.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\tbb12.dll" DestinationFiles="$(TargetDir)tbb12.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\tbbmalloc.dll" DestinationFiles="$(TargetDir)tbbmalloc.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\tbbmalloc_proxy.dll" DestinationFiles="$(TargetDir)tbbmalloc_proxy.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\paddle_yt_common.dll" DestinationFiles="$(TargetDir)paddle_yt_common.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\paddle_yt_phi.dll" DestinationFiles="$(TargetDir)paddle_yt_phi.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\yaml-cpp.dll" DestinationFiles="$(TargetDir)yaml-cpp.dll" />
+  </Target>
+
+  <Target Name="CopyPaddleOCRFilesForPublish" AfterTargets="Publish" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\PaddleOCR.dll" DestinationFiles="$(PublishDir)PaddleOCR.dll" />
+    <MakeDir Directories="$(PublishDir)inference" Condition="!Exists('$(PublishDir)inference')" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\PaddleOCR.config.json" DestinationFiles="$(PublishDir)inference\PaddleOCR.config.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\PaddleOCRStructure.config.json" DestinationFiles="$(PublishDir)inference\PaddleOCRStructure.config.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_cls_infer\inference.json" DestinationFiles="$(PublishDir)inference\yt_PP-OCRv5_mobile_cls_infer\inference.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_cls_infer\inference.pdiparams" DestinationFiles="$(PublishDir)inference\yt_PP-OCRv5_mobile_cls_infer\inference.pdiparams" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_cls_infer\inference.yml" DestinationFiles="$(PublishDir)inference\yt_PP-OCRv5_mobile_cls_infer\inference.yml" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_det_infer\inference.json" DestinationFiles="$(PublishDir)inference\yt_PP-OCRv5_mobile_det_infer\inference.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_det_infer\inference.pdiparams" DestinationFiles="$(PublishDir)inference\yt_PP-OCRv5_mobile_det_infer\inference.pdiparams" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_det_infer\inference.yml" DestinationFiles="$(PublishDir)inference\yt_PP-OCRv5_mobile_det_infer\inference.yml" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_rec_infer\inference.json" DestinationFiles="$(PublishDir)inference\yt_PP-OCRv5_mobile_rec_infer\inference.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_rec_infer\inference.pdiparams" DestinationFiles="$(PublishDir)inference\yt_PP-OCRv5_mobile_rec_infer\inference.pdiparams" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_PP-OCRv5_mobile_rec_infer\inference.yml" DestinationFiles="$(PublishDir)inference\yt_PP-OCRv5_mobile_rec_infer\inference.yml" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_SLANet_plus_infer\inference.json" DestinationFiles="$(PublishDir)inference\yt_SLANet_plus_infer\inference.json" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_SLANet_plus_infer\inference.pdiparams" DestinationFiles="$(PublishDir)inference\yt_SLANet_plus_infer\inference.pdiparams" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddleocrsharp\6.1.0\build\ytLib\inference\yt_SLANet_plus_infer\inference.yml" DestinationFiles="$(PublishDir)inference\yt_SLANet_plus_infer\inference.yml" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\paddle_inference.dll" DestinationFiles="$(PublishDir)paddle_inference.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\opencv_world470.dll" DestinationFiles="$(PublishDir)opencv_world470.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\mklml.dll" DestinationFiles="$(PublishDir)mklml.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\mkldnn.dll" DestinationFiles="$(PublishDir)mkldnn.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\libiomp5md.dll" DestinationFiles="$(PublishDir)libiomp5md.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\concrt140.dll" DestinationFiles="$(PublishDir)concrt140.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\msvcp140.dll" DestinationFiles="$(PublishDir)msvcp140.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\msvcp140_1.dll" DestinationFiles="$(PublishDir)msvcp140_1.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\msvcp140_2.dll" DestinationFiles="$(PublishDir)msvcp140_2.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\vcruntime140.dll" DestinationFiles="$(PublishDir)vcruntime140.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\vcruntime140_1.dll" DestinationFiles="$(PublishDir)vcruntime140_1.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\vccorlib140.dll" DestinationFiles="$(PublishDir)vccorlib140.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\tbb12.dll" DestinationFiles="$(PublishDir)tbb12.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\tbbmalloc.dll" DestinationFiles="$(PublishDir)tbbmalloc.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\tbbmalloc_proxy.dll" DestinationFiles="$(PublishDir)tbbmalloc_proxy.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\paddle_yt_common.dll" DestinationFiles="$(PublishDir)paddle_yt_common.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\paddle_yt_phi.dll" DestinationFiles="$(PublishDir)paddle_yt_phi.dll" />
+    <Copy SourceFiles="$(NuGetPackageRoot)paddle.runtime.win_x64\3.3.0.1\build\win_x64\yaml-cpp.dll" DestinationFiles="$(PublishDir)yaml-cpp.dll" />
+  </Target>
+
+  <ItemGroup>
+    <AvaloniaResource Remove="Assets\app.ico" />
+  </ItemGroup>
+
+  <!-- 赞助二维码：作为 Avalonia 资源嵌入程序集，运行时以 avares://TextFlowPlus/Assets/xxx.jpg 加载 -->
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\wechat.jpg" />
+    <AvaloniaResource Include="Assets\alipay.jpg" />
+  </ItemGroup>
+
+  <!-- Avalonia Pro 控件许可（Avalonia.Controls.RichTextEditor 及其 Docx/Rtf 序列化器依赖）。
+       注意：没有 key 时 DocxSerializer/RtfSerializer 会在打开/保存时直接抛异常（类型初始化器检查），
+       必须配置有效 key 才能使用 Word/RTF 功能。
+       个人/非商业用途可免费申请 Community License：https://avaloniaui.net/portal
+       注册后把 key 填入下面，例如：<AvaloniaUILicenseKey Include="AAL-XXXX-XXXX-XXXX" /> -->
+  <!--
+  <ItemGroup>
+    <AvaloniaUILicenseKey Include="" />
+  </ItemGroup>
+  -->
+
+</Project>

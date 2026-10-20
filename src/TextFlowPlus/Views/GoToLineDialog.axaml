@@ -1,0 +1,57 @@
+<Window
+    x:Class="TextFlowPlus.Views.GoToLineDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="跳转到行"
+    Width="300"
+    Height="100"
+    CanResize="False"
+    WindowStartupLocation="CenterOwner">
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+
+		<TextBlock
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="0,0,10,10"
+            VerticalAlignment="Center"
+            Text="行号 (_L):" />
+		<TextBox
+            x:Name="LineNumberTextBox"
+            Grid.Row="0"
+            Grid.Column="1"
+            Width="150"
+            Height="25"
+            Margin="0,0,0,10" />
+
+		<StackPanel
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+			<Button
+                Width="80"
+                Height="30"
+                Margin="0,0,10,0"
+                Click="GoTo_Click"
+                Content="确定"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center" />
+			<Button
+                Width="80"
+                Height="30"
+                Click="Cancel_Click"
+                Content="取消"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center" />
+		</StackPanel>
+	</Grid>
+</Window>

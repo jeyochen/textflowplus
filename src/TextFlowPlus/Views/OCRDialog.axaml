@@ -1,0 +1,163 @@
+<Window
+    Height="600"
+    MinHeight="500"
+    MinWidth="700"
+    Title="OCR 文字识别"
+    Width="900"
+    WindowStartupLocation="CenterOwner"
+    x:Class="TextFlowPlus.Views.OCRDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 顶部：图片选择 -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Orientation="Horizontal">
+            <TextBox
+                Width="550"
+                Margin="0,0,5,0"
+                IsReadOnly="True"
+                VerticalContentAlignment="Center"
+                x:Name="ImagePathTextBox" />
+            <Button
+                Content="浏览图片..."
+                Width="100"
+                ToolTip.Tip="选择本地图片文件"
+                x:Name="BrowseImageButton" />
+            <Button
+                Content="粘贴图片"
+                Width="100"
+                Margin="5,0,0,0"
+                ToolTip.Tip="将剪贴板中的图片粘贴到识别区域（Ctrl+V）"
+                x:Name="PasteImageButton" />
+        </StackPanel>
+
+        <!-- 中间：图片和识别结果 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧：图片显示 -->
+            <Border
+                Grid.Column="0"
+                Background="{DynamicResource PanelBackgroundBrush}"
+                BorderBrush="{DynamicResource PanelBorderBrush}"
+                BorderThickness="1">
+                <ScrollViewer
+                    x:Name="ImageScrollViewer"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto">
+                    <Image
+                        x:Name="PreviewImage"
+                        Stretch="Uniform"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </ScrollViewer>
+            </Border>
+
+            <!-- 分隔条 -->
+            <GridSplitter
+                Grid.Column="1"
+                Width="5"
+                HorizontalAlignment="Stretch"
+                Background="{DynamicResource PanelBorderBrush}" />
+
+            <!-- 右侧：识别结果 -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- 标题和复制按钮 -->
+                <StackPanel
+                    Grid.Row="0"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,5">
+                    <TextBlock
+                        FontWeight="Bold"
+                        Margin="0,0,5,0"
+                        Text="识别结果："
+                        VerticalAlignment="Center" />
+                    <Button
+                        Content="📋 复制"
+                        Width="80"
+                        ToolTip.Tip="复制文本到剪贴板"
+                        x:Name="CopyTextButton" />
+                </StackPanel>
+
+                <!-- 文本编辑区 -->
+                <TextBox
+                    Grid.Row="1"
+                    AcceptsReturn="True"
+                    BorderBrush="{DynamicResource PanelBorderBrush}"
+                    BorderThickness="1"
+                    FontFamily="Consolas"
+                    FontSize="14"
+                    TextWrapping="Wrap"
+                    x:Name="ResultTextBox" />
+
+                <!-- 等待提示（居中显示） -->
+                <StackPanel
+                    Grid.Row="1"
+                    x:Name="LoadingPanel"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsVisible="False"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        Margin="0,0,10,0"
+                        FontSize="14"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="正在识别文字"
+                        VerticalAlignment="Center" />
+                    <Ellipse
+                        x:Name="LoadingSpinner"
+                        Width="20"
+                        Height="20"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stroke="#0078D4"
+                        StrokeThickness="2" />
+                </StackPanel>
+
+                <!-- 状态信息 -->
+                <TextBlock
+                    Grid.Row="2"
+                    Margin="0,5,0,0"
+                    Foreground="{DynamicResource TextSecondaryBrush}"
+                    Text="就绪"
+                    x:Name="StatusText" />
+            </Grid>
+        </Grid>
+
+        <!-- 底部：操作按钮 -->
+        <StackPanel
+            Grid.Row="2"
+            Margin="0,10,0,0"
+            Orientation="Horizontal">
+            <Button
+                Content="重新识别"
+                Width="100"
+                x:Name="ReOCRButton" />
+            <Button
+                Content="关闭"
+                Width="80"
+                Margin="10,0,0,0"
+                IsCancel="True"
+                x:Name="CloseButton" />
+        </StackPanel>
+    </Grid>
+</Window>

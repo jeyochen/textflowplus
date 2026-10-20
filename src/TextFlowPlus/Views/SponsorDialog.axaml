@@ -1,0 +1,94 @@
+<Window
+    CanResize="False"
+    Height="470"
+    Title="赞助 TextFlowPlus"
+    Width="560"
+    WindowStartupLocation="CenterOwner"
+    x:Class="TextFlowPlus.Views.SponsorDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel Margin="20">
+        <StackPanel DockPanel.Dock="Top" Spacing="6">
+            <TextBlock
+                x:Name="TitleText"
+                FontSize="18"
+                FontWeight="Bold"
+                HorizontalAlignment="Center"
+                Text="赞助 TextFlowPlus" />
+            <TextBlock
+                x:Name="DescText"
+                HorizontalAlignment="Center"
+                Text="如果 TextFlowPlus 对你有帮助，欢迎扫码请作者喝杯咖啡"
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+        </StackPanel>
+
+        <Button
+            x:Name="CloseButton"
+            Width="90"
+            Margin="0,14,0,0"
+            HorizontalAlignment="Right"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            DockPanel.Dock="Bottom"
+            Content="关闭" />
+
+        <Grid Margin="0,16,0,0" ColumnDefinitions="*,*">
+            <Border
+                Grid.Column="0"
+                Margin="0,0,8,0"
+                Padding="12"
+                BorderBrush="{DynamicResource PanelBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="6">
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        x:Name="WeChatTitle"
+                        FontWeight="Bold"
+                        HorizontalAlignment="Center"
+                        Text="微信支付" />
+                    <Image
+                        x:Name="WeChatImage"
+                        Width="200"
+                        Height="200"
+                        Stretch="Uniform" />
+                    <TextBlock
+                        x:Name="WeChatHint"
+                        FontSize="12"
+                        HorizontalAlignment="Center"
+                        Text="打开微信扫一扫"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                Padding="12"
+                BorderBrush="{DynamicResource PanelBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="6">
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        x:Name="AlipayTitle"
+                        FontWeight="Bold"
+                        HorizontalAlignment="Center"
+                        Text="支付宝" />
+                    <Image
+                        x:Name="AlipayImage"
+                        Width="200"
+                        Height="200"
+                        Stretch="Uniform" />
+                    <TextBlock
+                        x:Name="AlipayHint"
+                        FontSize="12"
+                        HorizontalAlignment="Center"
+                        Text="打开支付宝扫一扫"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>

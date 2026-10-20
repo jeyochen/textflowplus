@@ -1,0 +1,877 @@
+<Window
+    x:Class="TextFlowPlus.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+    Title="TextFlowPlus"
+    Width="1280"
+    Height="800"
+    MinWidth="600"
+    MinHeight="400"
+    Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+    <Window.Styles>
+        <Style Selector="TabItem">
+            <Setter Property="Height" Value="30" />
+            <Setter Property="MinHeight" Value="30" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontFamily" Value="Microsoft YaHei" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border
+                        x:Name="PART_Border"
+                        Padding="15,2"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="0 12 0 0">
+                        <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="{TemplateBinding Header}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="Border#MainToolBar Button.ToolBarButton">
+            <!-- 正常状态 -->
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Height" Value="32" />   <!-- 可选：统一高度 -->
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+
+            <!-- 鼠标悬停状态：只改变背景，保持前景色不变 -->
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+                <!-- 保持与原 Foreground 相同的颜色，避免变黑 -->
+                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="4,2" />
+            </Style>
+
+            <!-- 鼠标按下状态 -->
+            <Style Selector="^:pressed">
+                <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            </Style>
+
+            <!-- 获得焦点时的视觉反馈（可选） -->
+            <Style Selector="^:focus">
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightBaseHighBrush}" />
+                <!-- 焦点时也不改变前景色 -->
+                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            </Style>
+
+            <!-- 确保 Button 内部的 TextBlock 不额外覆盖前景色（可选防护） -->
+            <Style Selector="^ TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            </Style>
+        </Style>
+
+    </Window.Styles>
+
+    <DockPanel>
+        <!--  菜单栏  -->
+        <Menu x:Name="MainMenuControl" DockPanel.Dock="Top">
+            <MenuItem Header="文件 (_F)">
+                <MenuItem
+                    Click="NewFile_Click"
+                    Header="新建 (_N)"
+                    InputGesture="Ctrl+N" />
+                <MenuItem
+                    Click="OpenFile_Click"
+                    Header="打开 (_O)"
+                    InputGesture="Ctrl+O" />
+                <MenuItem
+                    Click="OpenFolder_Click"
+                    Header="打开文件夹 (_D)"
+                    InputGesture="Ctrl+Shift+O" />
+                <MenuItem
+                    Click="OpenRemoteWindow_Click"
+                    Header="打开远程窗口 (_T)" />
+                <MenuItem x:Name="RecentFilesMenu" Header="最近打开 (_R)" />
+                <Separator />
+                <MenuItem
+                    Click="Save_Click"
+                    x:Name="SaveMenuItem"
+                    Header="保存 (_S)"
+                    InputGesture="Ctrl+S" />
+                <MenuItem
+                    Click="SaveAs_Click"
+                    x:Name="SaveAsMenuItem"
+                    Header="另存为 (_A)"
+                    InputGesture="Ctrl+Shift+S" />
+                <Separator />
+                <MenuItem
+                    Click="CloseTab_Click"
+                    Header="关闭 (_W)"
+                    InputGesture="Ctrl+W" />
+                <Separator />
+                <MenuItem Click="Exit_Click" Header="退出 (_X)" />
+            </MenuItem>
+
+            <MenuItem Header="编辑 (_E)">
+                <MenuItem
+                    Click="Undo_Click"
+                    x:Name="UndoMenuItem"
+                    Header="撤销 (_U)"
+                    InputGesture="Ctrl+Z" />
+                <MenuItem
+                    Click="Redo_Click"
+                    x:Name="RedoMenuItem"
+                    Header="重做 (_R)"
+                    InputGesture="Ctrl+Y" />
+                <Separator />
+                <MenuItem
+                    Click="Cut_Click"
+                    x:Name="CutMenuItem"
+                    Header="剪切 (_T)"
+                    InputGesture="Ctrl+X" />
+                <MenuItem
+                    Click="Copy_Click"
+                    x:Name="CopyMenuItem"
+                    Header="复制 (_C)"
+                    InputGesture="Ctrl+C" />
+                <MenuItem
+                    Click="Paste_Click"
+                    x:Name="PasteMenuItem"
+                    Header="粘贴 (_P)"
+                    InputGesture="Ctrl+V" />
+                <Separator />
+                <MenuItem
+                    Click="SelectAll_Click"
+                    x:Name="SelectAllMenuItem"
+                    Header="全选 (_A)"
+                    InputGesture="Ctrl+A" />
+                <Separator />
+                <MenuItem
+                    Click="Find_Click"
+                    x:Name="FindMenuItem"
+                    Header="查找 (_F)"
+                    InputGesture="Ctrl+F" />
+                <MenuItem
+                    Click="Replace_Click"
+                    x:Name="ReplaceMenuItem"
+                    Header="替换 (_R)"
+                    InputGesture="Ctrl+H" />
+                <Separator />
+                <MenuItem
+                    x:Name="FormatCodeMenuItem"
+                    Click="FormatCode_Click"
+                    Header="格式化代码 (_K)"
+                    InputGesture="Ctrl+K" />
+                <Separator />
+                <MenuItem
+                    x:Name="ShowTabsMenuItem"
+                    Click="ShowTabs_Click"
+                    Header="显示制表符" />
+                <MenuItem
+                    x:Name="ShowSpacesMenuItem"
+                    Click="ShowSpaces_Click"
+                    Header="显示空格" />
+                <MenuItem
+                    x:Name="ShowEndOfLineMenuItem"
+                    Click="ShowEndOfLine_Click"
+                    Header="显示行尾标记" />
+                <Separator />
+                <MenuItem
+                    x:Name="ColumnEditMenuItem"
+                    Click="ColumnEdit_Click"
+                    Header="列编辑 (_C)" />
+            </MenuItem>
+
+            <MenuItem x:Name="EncodingMenu" Header="编码 (_C)">
+                <MenuItem x:Name="CurrentEncodingMenuItem" Header="当前编码">
+                    <MenuItem Header="自动检测" />
+                </MenuItem>
+                <Separator />
+                <MenuItem Click="SaveAsAnsi_Click" Header="以 GB2312 编码保存" />
+                <MenuItem Click="SaveAsUtf8_Click" Header="以 UTF-8 编码保存" />
+                <MenuItem Click="SaveAsUtf8Bom_Click" Header="以 UTF-8 with BOM 编码保存" />
+                <Separator />
+                <MenuItem Click="ConvertToAnsi_Click" Header="转换为 GB2312" />
+                <MenuItem Click="ConvertToUtf8_Click" Header="转换为 UTF-8" />
+                <MenuItem Click="ConvertToUtf8Bom_Click" Header="转换为 UTF-8 with BOM" />
+            </MenuItem>
+
+            <MenuItem x:Name="LanguageMenu" Header="语言 (_L)">
+                <MenuItem
+                    Click="Language_Click"
+                    Header="C/C++"
+                    Tag="C++" />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="C#"
+                    Tag="C#" />
+                <Separator />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="Go"
+                    Tag="Go" />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="Rust"
+                    Tag="Rust" />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="Java"
+                    Tag="Java" />
+                <Separator />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="Python"
+                    Tag="Python" />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="JavaScript"
+                    Tag="JavaScript" />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="TypeScript"
+                    Tag="TypeScript" />
+                <Separator />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="HTML"
+                    Tag="HTML" />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="CSS"
+                    Tag="CSS" />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="Vue"
+                    Tag="Vue" />
+                <Separator />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="XAML"
+                    Tag="XAML" />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="YAML"
+                    Tag="YAML" />
+                <MenuItem x:Name="JsonSubMenu" Header="JSON">
+                    <MenuItem Click="JsonFormat_Click" Header="JSON 格式化" />
+                    <MenuItem Click="JsonMinify_Click" Header="JSON 压缩" />
+                    <Separator />
+                    <MenuItem Click="JsonValidate_Click" Header="JSON 语法检查" />
+                    <Separator />
+                    <MenuItem
+                        Click="Language_Click"
+                        Header="JSON 语法高亮"
+                        Tag="JSON" />
+                </MenuItem>
+                <Separator />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="纯文本"
+                    Tag="PlainText" />
+                <Separator />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="Markdown"
+                    Tag="Markdown" />
+                <Separator />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="Proto"
+                    Tag="Proto" />
+                <Separator />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="NSIS"
+                    Tag="NSIS" />
+                <Separator />
+                <MenuItem
+                    Click="Language_Click"
+                    Header="日志"
+                    Tag="Log" />
+            </MenuItem>
+
+
+            <MenuItem Header="视图 (_V)">
+                <MenuItem
+                    Click="ZoomIn_Click"
+                    Header="放大 (_I)"
+                    InputGesture="Ctrl++" />
+                <MenuItem
+                    Click="ZoomOut_Click"
+                    Header="缩小 (_O)"
+                    InputGesture="Ctrl+-" />
+                <MenuItem
+                    Click="ZoomReset_Click"
+                    Header="重置缩放 (_R)"
+                    InputGesture="Ctrl+0" />
+                <MenuItem
+                    x:Name="WordWrapMenuItem"
+                    Click="WordWrap_Click"
+                    Header="自动换行"
+                    IsChecked="True" />
+                <Separator />
+                <MenuItem Header="折叠">
+                    <MenuItem
+                        Click="FoldCurrent_Click"
+                        Header="折叠当前块"
+                        InputGesture="Ctrl+Shift+OemOpenBrackets" />
+                    <MenuItem
+                        Click="UnfoldCurrent_Click"
+                        Header="展开当前块"
+                        InputGesture="Ctrl+Shift+OemCloseBrackets" />
+                    <Separator />
+                    <MenuItem
+                        Click="FoldAll_Click"
+                        Header="折叠所有块"
+                        InputGesture="Ctrl+Alt+OemOpenBrackets" />
+                    <MenuItem
+                        Click="UnfoldAll_Click"
+                        Header="展开所有块"
+                        InputGesture="Ctrl+Alt+OemCloseBrackets" />
+                    <MenuItem
+                        Click="ToggleFoldAll_Click"
+                        Header="切换折叠/展开全部" />
+                </MenuItem>
+                <Separator />
+                <MenuItem
+                    x:Name="ToolbarMenuItem"
+                    Click="Toolbar_Click"
+                    Header="工具栏"
+                    IsChecked="True" />
+                <MenuItem
+                    x:Name="StatusbarMenuItem"
+                    Click="Statusbar_Click"
+                    Header="状态栏"
+                    IsChecked="True" />
+                <MenuItem
+                    x:Name="FolderTreeMenuItem"
+                    Click="FolderTreeMenu_Click"
+                    Header="文件夹列表"
+                    IsChecked="False" />
+                <Separator />
+                <MenuItem
+                    x:Name="AgentMenuItem"
+                    Click="AgentMenu_Click"
+                    Header="AI 助手"
+                    IsChecked="True" />
+                <Separator />
+                <MenuItem Header="主题">
+                    <MenuItem
+                        x:Name="ThemeLightMenuItem"
+                        Click="ThemeLight_Click"
+                        Header="亮色"
+                        IsChecked="True" />
+                    <MenuItem
+                        x:Name="ThemeDarkMenuItem"
+                        Click="ThemeDark_Click"
+                        Header="暗色" />
+                </MenuItem>
+                <Separator />
+                <!-- 界面语言：中文 / 英文 / 日语 -->
+                <MenuItem
+                    x:Name="UiChineseMenuItem"
+                    Click="UiLanguage_Click"
+                    Header="中文"
+                    Tag="zh"
+                    IsChecked="True" />
+                <MenuItem
+                    x:Name="UiEnglishMenuItem"
+                    Click="UiLanguage_Click"
+                    Header="英文"
+                    Tag="en" />
+                <MenuItem
+                    x:Name="UiJapaneseMenuItem"
+                    Click="UiLanguage_Click"
+                    Header="日语"
+                    Tag="ja" />
+                <Separator />
+                <MenuItem
+                    Click="Terminal_Click"
+                    Header="终端 (_T)"
+                    InputGesture="Ctrl+Shift+T" />
+            </MenuItem>
+
+            <MenuItem Header="扩展功能 (_X)">
+                <MenuItem Click="HttpDebugger_Click" Header="HTTP 协议 (_H)" />
+                <MenuItem Click="HashCalc_Click" Header="信息摘要计算 (_D)" />
+                <MenuItem Click="Crypto_Click" Header="加密/解密 (_C)" />
+                <!--                <MenuItem Click="OCR_Click" Header="OCR 文字识别 (_O)" />
+                <MenuItem Click="SpeechToText_Click" Header="语音转文本 (_S)" />-->
+                <Separator />
+                <MenuItem Click="SshConnectNew_Click" Header="SSH 连接 (_S)" />
+                <MenuItem Click="OpenRemoteWindow_Click" Header="远程文件夹 (_R)" />
+            </MenuItem>
+
+            <MenuItem Click="Sponsor_Click" Header="赞助 (_S)" />
+
+            <MenuItem Header="关于 (_A)">
+                <MenuItem Click="About_Click" Header="关于 TextFlowPlus" />
+                <MenuItem Click="CheckForUpdates_Click" Header="检查新版本" />
+                <MenuItem Click="Feedback_Click" Header="意见反馈" />
+            </MenuItem>
+        </Menu>
+
+        <!--  工具栏 (用 StackPanel 模拟)  -->
+        <Border
+            x:Name="MainToolBar"
+            Padding="4,2"
+            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+            BorderBrush="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}"
+            BorderThickness="0,0,0,1"
+            DockPanel.Dock="Top">
+            <StackPanel Orientation="Horizontal" Spacing="2">
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="NewFile_Click"
+                    ToolTip.Tip="新建">
+                    <TextBlock FontSize="26" Text="📄" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="OpenFile_Click"
+                    ToolTip.Tip="打开文件">
+                    <TextBlock FontSize="26" Text="📂" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="OpenFolder_Click"
+                    ToolTip.Tip="打开文件夹">
+                    <TextBlock FontSize="26" Text="📁" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="OpenRemoteWindow_Click"
+                    ToolTip.Tip="远程文件夹">
+                    <TextBlock FontSize="26" Text="🖥" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="Save_Click"
+                    ToolTip.Tip="保存">
+                    <TextBlock FontSize="26" Text="💾" />
+                </Button>
+                <Border
+                    Width="1"
+                    Height="22"
+                    Margin="3,0"
+                    Classes="ToolBarButton"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolSeparatorBrush}" />
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    Classes="ToolBarButton"
+                    BorderThickness="0"
+                    Click="Undo_Click"
+                    ToolTip.Tip="撤销">
+                    <TextBlock FontSize="26" Text="↩" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="Redo_Click"
+                    ToolTip.Tip="重做">
+                    <TextBlock FontSize="26" Text="↪" />
+                </Button>
+                <Border
+                    Width="1"
+                    Height="22"
+                    Margin="3,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolSeparatorBrush}" />
+                <Button
+                    Padding="4,2"
+                    Classes="ToolBarButton"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="Cut_Click"
+                    ToolTip.Tip="剪切">
+                    <TextBlock FontSize="26" Text="✂" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Classes="ToolBarButton"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="Copy_Click"
+                    ToolTip.Tip="复制">
+                    <TextBlock FontSize="26" Text="📋" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Classes="ToolBarButton"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="Paste_Click"
+                    ToolTip.Tip="粘贴">
+                    <TextBlock FontSize="26" Text="📝" />
+                </Button>
+                <Border
+                    Width="1"
+                    Height="22"
+                    Margin="3,0"
+                    Classes="ToolBarButton"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolSeparatorBrush}" />
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="Find_Click"
+                    ToolTip.Tip="查找">
+                    <TextBlock FontSize="26" Text="🔍" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="Replace_Click"
+                    ToolTip.Tip="替换">
+                    <TextBlock FontSize="26" Text="🔄" />
+                </Button>
+                <Border
+                    Width="1"
+                    Height="22"
+                    Margin="3,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolSeparatorBrush}" />
+                <Button
+                    Padding="4,2"
+                    Classes="ToolBarButton"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="AgentToolbarButton_Click"
+                    ToolTip.Tip="AI 助手（显示/隐藏停靠窗口）">
+                    <TextBlock FontSize="26" Text="🤖" />
+                </Button>
+                <Border
+                    Width="1"
+                    Height="22"
+                    Margin="3,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolSeparatorBrush}" />
+                <Button
+                    Padding="4,2"
+                    Classes="ToolBarButton"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="GoToStart_Click"
+                    ToolTip.Tip="跳转到开头">
+                    <TextBlock FontSize="26" Text="⏮" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="GoToEnd_Click"
+                    ToolTip.Tip="跳转到结尾">
+                    <TextBlock FontSize="26" Text="⏭" />
+                </Button>
+                <Border
+                    Width="1"
+                    Height="22"
+                    Margin="3,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolSeparatorBrush}" />
+                <Button
+                    Padding="4,2"
+                    Classes="ToolBarButton"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="FileCompare_Click"
+                    ToolTip.Tip="文件对比">
+                    <TextBlock FontSize="26" Text="🔀" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="FolderCompare_Click"
+                    ToolTip.Tip="文件夹对比">
+                    <TextBlock FontSize="26" Text="📁" />
+                </Button>
+                <Border
+                    Width="1"
+                    Height="22"
+                    Margin="3,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolSeparatorBrush}" />
+                <Button
+                    Padding="4,2"
+                    Classes="ToolBarButton"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="ZoomIn_Click"
+                    ToolTip.Tip="放大">
+                    <TextBlock FontSize="20" Text="🔍+" />
+                </Button>
+                <Button
+                    Padding="4,2"
+                    Classes="ToolBarButton"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="ZoomOut_Click"
+                    ToolTip.Tip="缩小">
+                    <TextBlock FontSize="20" Text="🔍-" />
+                </Button>
+                <Button
+                    x:Name="LogMonitorButton"
+                    Padding="4,2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Classes="ToolBarButton"
+                    Click="LogMonitor_Click"
+                    ToolTip.Tip="日志监控 (Tail -f)">
+                    <TextBlock FontSize="26" Text="🔍" />
+                </Button>
+                <Border
+                    Width="1"
+                    Height="22"
+                    Margin="3,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolSeparatorBrush}" />
+                <ComboBox
+                    x:Name="FontFamilyComboBox"
+                    Width="120"
+                    Height="20"
+                    SelectedIndex="0"
+                    SelectionChanged="FontFamilyComboBox_SelectionChanged">
+                    <ComboBoxItem>Consolas</ComboBoxItem>
+                    <ComboBoxItem>Courier New</ComboBoxItem>
+                    <ComboBoxItem>Lucida Console</ComboBoxItem>
+                    <ComboBoxItem>Source Code Pro</ComboBoxItem>
+                    <ComboBoxItem>Fira Code</ComboBoxItem>
+                    <ComboBoxItem>JetBrains Mono</ComboBoxItem>
+                    <ComboBoxItem>Cascadia Code</ComboBoxItem>
+                    <ComboBoxItem>宋体</ComboBoxItem>
+                    <ComboBoxItem>微软雅黑</ComboBoxItem>
+                    <ComboBoxItem>等线</ComboBoxItem>
+                </ComboBox>
+                <Border
+                    Width="1"
+                    Height="22"
+                    Margin="3,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolSeparatorBrush}" />
+                <ComboBox
+                    x:Name="FontSizeComboBox"
+                    Width="80"
+                    Height="20"
+                    SelectedIndex="6"
+                    SelectionChanged="FontSizeComboBox_SelectionChanged">
+                    <ComboBoxItem>8</ComboBoxItem>
+                    <ComboBoxItem>9</ComboBoxItem>
+                    <ComboBoxItem>10</ComboBoxItem>
+                    <ComboBoxItem>11</ComboBoxItem>
+                    <ComboBoxItem>12</ComboBoxItem>
+                    <ComboBoxItem>14</ComboBoxItem>
+                    <ComboBoxItem>16</ComboBoxItem>
+                    <ComboBoxItem>18</ComboBoxItem>
+                    <ComboBoxItem>20</ComboBoxItem>
+                    <ComboBoxItem>22</ComboBoxItem>
+                    <ComboBoxItem>24</ComboBoxItem>
+                    <ComboBoxItem>28</ComboBoxItem>
+                    <ComboBoxItem>32</ComboBoxItem>
+                    <ComboBoxItem>36</ComboBoxItem>
+                    <ComboBoxItem>48</ComboBoxItem>
+                    <ComboBoxItem>72</ComboBoxItem>
+                </ComboBox>
+<Border
+                    Width="1"
+                    Height="22"
+                    Margin="3,0"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolSeparatorBrush}" />
+<!-- 字体颜色：点击弹出颜色面板，选择后应用到所有编辑器的文字颜色 -->
+                <Button
+                    x:Name="FontColorButton"
+                    Padding="4,2"
+                    Classes="ToolBarButton"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="FontColorButton_Click"
+                    ToolTip.Tip="字体颜色">
+                    <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                        <TextBlock Text="A" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                        <Border
+                            x:Name="FontColorSwatch"
+                            Width="16"
+                            Height="5"
+                            CornerRadius="2.5"
+                            Background="Black"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Popup
+                    x:Name="FontColorPopup"
+                    PlacementTarget="{Binding #FontColorButton}"
+                    Placement="Bottom"
+                    IsLightDismissEnabled="True">
+                    <Border
+                        Background="{DynamicResource PopupBackgroundBrush}"
+                        BorderBrush="{DynamicResource PopupBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Padding="8">
+                        <StackPanel Spacing="6">
+                            <!-- 预设色板（ItemsSource 由代码填充为 SolidColorBrush 列表） -->
+                            <ItemsControl x:Name="FontColorGrid">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button
+                                            Width="22"
+                                            Height="22"
+                                            Margin="2"
+                                            CornerRadius="4"
+                                            BorderThickness="1"
+                                            BorderBrush="{DynamicResource SwatchBorderBrush}"
+                                            Background="{Binding}"
+                                            Tag="{Binding}"
+                                            Click="FontColorSwatch_Click" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Border Height="1" Background="{DynamicResource PopupDividerBrush}" />
+                            <!-- 当前颜色显示 -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border
+                                    x:Name="CurrentColorPreview"
+                                    Width="18"
+                                    Height="18"
+                                    CornerRadius="3"
+                                    BorderBrush="{DynamicResource SwatchBorderBrush}"
+                                    BorderThickness="1"
+                                    Background="Black"
+                                    VerticalAlignment="Center" />
+                                <TextBlock
+                                    x:Name="CurrentColorText"
+                                    Text="黑色"
+                                    FontSize="12"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Popup>
+                
+            </StackPanel>
+        </Border>
+
+        <!--  主编辑区域 + 状态栏（DockHost：主编辑区与 AI 助手面板两列布局，状态栏横跨底部）  -->
+        <Grid x:Name="DockHost">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  单个标签页容器（列 0，与 agent 面板同高；列位置由代码布局设置）  -->
+            <TabControl
+                x:Name="FileTabControl"
+                Grid.Row="0"
+                SelectionChanged="FileTabControl_SelectionChanged">
+                <TabControl.Styles>
+                    <Style Selector="TabItem">
+                        <Setter Property="Padding" Value="10,5" />
+                        <Setter Property="FontSize" Value="12" />
+                    </Style>
+                    <Style Selector="TabStrip ItemsPresenter">
+                        <Setter Property="ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Styles>
+            </TabControl>
+
+            <!--  状态栏 (底部，横跨全部列，不被 agent 面板遮挡)  -->
+            <Border
+                x:Name="MainStatusBar"
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Padding="6,3"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                BorderBrush="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}"
+                BorderThickness="0,1,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        x:Name="StatusText"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Text="Ready" />
+                    <TextBlock
+                        x:Name="FilePathText"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Text=""
+                        ToolTip.Tip="点击复制文件路径"
+                        PointerPressed="FilePathText_PointerPressed">
+                        <TextBlock.Styles>
+                            <Style Selector="TextBlock:pointerover">
+                                <Setter Property="Cursor" Value="Hand" />
+                            </Style>
+                        </TextBlock.Styles>
+                    </TextBlock>
+                    <TextBlock
+                        x:Name="CursorPosText"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Text="Ln: 1, Col: 1" />
+                    <TextBlock
+                        x:Name="LineCountText"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Text="Lines: 0" />
+                    <TextBlock
+                        x:Name="ByteCountText"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Text="Bytes: 0" />
+                    <TextBlock
+                        x:Name="EncodingText"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Text="Encoding: UTF-8" />
+                    <TextBlock
+                        x:Name="ZoomText"
+                        Margin="10,0,10,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Text="100%" />
+                    <TextBlock VerticalAlignment="Center" Text="TextFlowPlus v1.0" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>

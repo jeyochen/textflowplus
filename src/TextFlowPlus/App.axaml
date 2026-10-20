@@ -1,0 +1,85 @@
+<Application
+    x:Class="TextFlowPlus.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:CompileBindings="True">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- 亮色主题：语义颜色 -->
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="EditorBackgroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="EditorForegroundBrush" Color="#1E1E1E" />
+                    <SolidColorBrush x:Key="EditorSelectionBrush" Color="#ADD8E6" />
+                    <SolidColorBrush x:Key="TabBackgroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="TabBorderBrush" Color="#D0D0D0" />
+                    <SolidColorBrush x:Key="ToolSeparatorBrush" Color="#999999" />
+                    <SolidColorBrush x:Key="PopupBackgroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="PopupBorderBrush" Color="#D0D0D0" />
+                    <SolidColorBrush x:Key="PopupDividerBrush" Color="#E5E5E5" />
+                    <SolidColorBrush x:Key="SwatchBorderBrush" Color="#C8C8C8" />
+                    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#F5F5F5" />
+                    <SolidColorBrush x:Key="PanelBorderBrush" Color="#CCCCCC" />
+                    <SolidColorBrush x:Key="StatusBarBackgroundBrush" Color="#F3F3F3" />
+                    <SolidColorBrush x:Key="LabelForegroundBrush" Color="#333333" />
+                    <SolidColorBrush x:Key="TextBoxBackgroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="TextBoxForegroundBrush" Color="#333333" />
+                    <SolidColorBrush x:Key="ButtonSecondaryForegroundBrush" Color="#333333" />
+                    <SolidColorBrush x:Key="ButtonSecondaryBorderBrush" Color="#999999" />
+                    <SolidColorBrush x:Key="SecondaryHoverBackgroundBrush" Color="#E0E0E0" />
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#808080" />
+                    <SolidColorBrush x:Key="ErrorForegroundBrush" Color="#D32F2F" />
+                    <SolidColorBrush x:Key="StripBackgroundBrush" Color="#EDEDED" />
+                    <SolidColorBrush x:Key="StripHoverBrush" Color="#E8F1FB" />
+                    <SolidColorBrush x:Key="StripDividerBrush" Color="#D6D6D6" />
+                    <SolidColorBrush x:Key="StripCircleBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="StripCircleBorderBrush" Color="#CCCCCC" />
+                    <SolidColorBrush x:Key="StripChevronBrush" Color="#5A5A5A" />
+                </ResourceDictionary>
+                <!-- 暗色主题：语义颜色 -->
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="EditorBackgroundBrush" Color="#1E1E1E" />
+                    <SolidColorBrush x:Key="EditorForegroundBrush" Color="#DCDCDC" />
+                    <SolidColorBrush x:Key="EditorSelectionBrush" Color="#264F78" />
+                    <SolidColorBrush x:Key="TabBackgroundBrush" Color="#2D2D30" />
+                    <SolidColorBrush x:Key="TabBorderBrush" Color="#3F3F46" />
+                    <SolidColorBrush x:Key="ToolSeparatorBrush" Color="#555555" />
+                    <SolidColorBrush x:Key="PopupBackgroundBrush" Color="#252526" />
+                    <SolidColorBrush x:Key="PopupBorderBrush" Color="#3F3F46" />
+                    <SolidColorBrush x:Key="PopupDividerBrush" Color="#3F3F46" />
+                    <SolidColorBrush x:Key="SwatchBorderBrush" Color="#666666" />
+                    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#2D2D30" />
+                    <SolidColorBrush x:Key="PanelBorderBrush" Color="#3F3F46" />
+                    <SolidColorBrush x:Key="StatusBarBackgroundBrush" Color="#2D2D30" />
+                    <SolidColorBrush x:Key="LabelForegroundBrush" Color="#CCCCCC" />
+                    <SolidColorBrush x:Key="TextBoxBackgroundBrush" Color="#3C3C41" />
+                    <SolidColorBrush x:Key="TextBoxForegroundBrush" Color="#E0E0E0" />
+                    <SolidColorBrush x:Key="ButtonSecondaryForegroundBrush" Color="#D0D0D0" />
+                    <SolidColorBrush x:Key="ButtonSecondaryBorderBrush" Color="#666666" />
+                    <SolidColorBrush x:Key="SecondaryHoverBackgroundBrush" Color="#3E3E44" />
+                    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A0A0A0" />
+                    <SolidColorBrush x:Key="ErrorForegroundBrush" Color="#FF6B6B" />
+                    <SolidColorBrush x:Key="StripBackgroundBrush" Color="#333337" />
+                    <SolidColorBrush x:Key="StripHoverBrush" Color="#3A3A41" />
+                    <SolidColorBrush x:Key="StripDividerBrush" Color="#45454B" />
+                    <SolidColorBrush x:Key="StripCircleBrush" Color="#3E3E44" />
+                    <SolidColorBrush x:Key="StripCircleBorderBrush" Color="#55555C" />
+                    <SolidColorBrush x:Key="StripChevronBrush" Color="#ADADAD" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    <Application.Styles>
+        <FluentTheme>
+            <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+        </FluentTheme>
+        <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+        <!-- 富文本编辑器（Avalonia Pro 控件）主题资源 -->
+        <StyleInclude Source="avares://Avalonia.Controls.RichTextEditor/Themes/Default.axaml" />
+        <!-- 对话框等窗口未显式设置背景时跟随主题：否则深色主题下是纯黑、亮色下是纯白，与整体配色不一致。
+             主窗口等已显式设置 Background 的窗口不受影响（本地值优先于样式）。 -->
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{DynamicResource EditorBackgroundBrush}" />
+        </Style>
+    </Application.Styles>
+</Application>

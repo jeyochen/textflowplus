@@ -1,0 +1,252 @@
+<Window
+    Height="800"
+    MinHeight="600"
+    MinWidth="700"
+    Title="HTTP 调试"
+    Width="900"
+    WindowStartupLocation="CenterOwner"
+    x:Class="TextFlowPlus.Views.HttpDebuggerDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:models="clr-namespace:TextFlowPlus.Models"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="10" x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="260" />
+            <RowDefinition Height="200" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="5*" />
+        </Grid.RowDefinitions>
+
+        <!--  Row 0: Method + URL + Send  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Orientation="Horizontal">
+            <ComboBox
+                Margin="0,0,10,0"
+                Width="100"
+                x:Name="MethodComboBox">
+                <ComboBoxItem Content="GET" />
+                <ComboBoxItem Content="POST" />
+                <ComboBoxItem Content="PUT" />
+                <ComboBoxItem Content="DELETE" />
+                <ComboBoxItem Content="PATCH" />
+                <ComboBoxItem Content="HEAD" />
+                <ComboBoxItem Content="OPTIONS" />
+            </ComboBox>
+            <TextBox
+                Text="https://"
+                VerticalContentAlignment="Center"
+                Width="500"
+                x:Name="UrlTextBox" />
+            <Button
+                Content="发送"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Width="80"
+                x:Name="SendButton" />
+        </StackPanel>
+
+        <!--  Row 1: Headers  -->
+        <Border
+            BorderBrush="Gray"
+            BorderThickness="1"
+            CornerRadius="4"
+            Grid.Row="1"
+            Margin="0,0,0,10"
+            Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="0,0,0,5"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        FontWeight="Bold"
+                        Margin="0,0,10,0"
+                        Text="请求头 (Headers)"
+                        VerticalAlignment="Center" />
+                    <Button
+                        Content="添加常用头"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Width="100"
+                        x:Name="AddCommonHeadersButton" />
+                    <Button
+                        Content="清除"
+                        HorizontalContentAlignment="Center"
+                        Margin="5,0,0,0"
+                        VerticalContentAlignment="Center"
+                        Width="60"
+                        x:Name="ClearHeadersButton" />
+                </StackPanel>
+                <DataGrid
+                    AutoGenerateColumns="False"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    Grid.Row="1"
+                    Height="200"
+                    IsReadOnly="False"
+                    x:DataType="models:HeaderItem"
+                    x:Name="HeadersDataGrid">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding Key}"
+                            Header="Key"
+                            Width="150" />
+                        <DataGridTextColumn
+                            Binding="{Binding Value}"
+                            Header="Value"
+                            Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <!--  Row 2: Body  -->
+        <Border
+            BorderBrush="Gray"
+            BorderThickness="1"
+            CornerRadius="4"
+            Grid.Row="2"
+            Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    FontWeight="Bold"
+                    Grid.Row="0"
+                    Margin="0,0,0,5"
+                    Text="请求体 (Body) — 仅 POST/PUT/PATCH" />
+                <StackPanel
+                    Grid.Row="1"
+                    Margin="0,0,0,5"
+                    Orientation="Horizontal">
+                    <RadioButton
+                        Content="JSON"
+                        IsChecked="True"
+                        Margin="0,0,10,0"
+                        x:Name="JsonRadioButton" />
+                    <RadioButton
+                        Content="Text"
+                        Margin="0,0,10,0"
+                        x:Name="TextRadioButton" />
+                    <RadioButton
+                        Content="XML"
+                        Margin="0,0,10,0"
+                        x:Name="XmlRadioButton" />
+                    <RadioButton Content="Form" x:Name="FormRadioButton" />
+                    <Button
+                        Content="格式化 JSON"
+                        HorizontalContentAlignment="Center"
+                        Margin="10,0,0,0"
+                        VerticalContentAlignment="Center"
+                        x:Name="FormatJsonButton" />
+                </StackPanel>
+                <TextBox
+                    AcceptsReturn="True"
+                    FontFamily="Cascadia Code,Consolas,monospace"
+                    FontSize="14"
+                    Grid.Row="2"
+                    HorizontalAlignment="Stretch"
+                    TextWrapping="Wrap"
+                    VerticalAlignment="Stretch"
+                    x:Name="BodyTextBox" />
+            </Grid>
+        </Border>
+
+        <!--  Row 3: Status  -->
+        <Grid Grid.Row="3" Margin="0,10,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <TextBlock
+                    Margin="0,0,5,0"
+                    Text="状态："
+                    VerticalAlignment="Center" />
+                <TextBlock
+                    FontWeight="Bold"
+                    MinWidth="200"
+                    VerticalAlignment="Center"
+                    x:Name="StatusTextBlock" />
+                <TextBlock
+                    Margin="10,0,5,0"
+                    Text="  耗时："
+                    VerticalAlignment="Center" />
+                <TextBlock
+                    MinWidth="100"
+                    VerticalAlignment="Center"
+                    x:Name="TimeTextBlock" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    Content="复制响应"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Width="80"
+                    x:Name="CopyResponseButton" />
+                <Button
+                    Content="保存响应"
+                    HorizontalContentAlignment="Center"
+                    Margin="5,0,0,0"
+                    VerticalContentAlignment="Center"
+                    Width="80"
+                    x:Name="SaveResponseButton" />
+            </StackPanel>
+        </Grid>
+
+        <!--  Row 4: Response  -->
+        <Border
+            BorderBrush="Gray"
+            BorderThickness="1"
+            CornerRadius="4"
+            Grid.Row="4"
+            Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    FontWeight="Bold"
+                    Grid.Row="0"
+                    Margin="0,0,0,5"
+                    Text="响应" />
+                <TabControl Grid.Row="1">
+                    <TabItem Header="Body">
+                        <TextBox
+                            AcceptsReturn="True"
+                            FontFamily="Cascadia Code,Consolas,monospace"
+                            FontSize="14"
+                            IsReadOnly="True"
+                            TextWrapping="Wrap"
+                            x:Name="ResponseTextBox" />
+                    </TabItem>
+                    <TabItem Header="Headers">
+                        <DataGrid
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            x:Name="ResponseHeadersDataGrid">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Key" Width="150" />
+                                <DataGridTextColumn Header="Value" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

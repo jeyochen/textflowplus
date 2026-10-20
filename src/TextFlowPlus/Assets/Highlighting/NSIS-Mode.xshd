@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="NSIS" extensions=".nsi;.nsh" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Comment" foreground="#008000" />
+	<Color name="String" foreground="#A31515" />
+	<Color name="Keyword" foreground="#0000FF" />
+	<Color name="Number" foreground="#098658" />
+	<Color name="Function" foreground="#795E26" />
+	<Color name="Variable" foreground="#FF0000" />
+	<Color name="Operator" foreground="#000000" />
+	<Color name="Punctuation" foreground="#000000" />
+	<Color name="Directive" foreground="#800080" />
+	<Color name="Section" foreground="#2B91AF" />
+	<Color name="Label" foreground="#800000" />
+
+	<RuleSet>
+		<!-- Comments -->
+		<Span color="Comment">
+			<Begin>;</Begin>
+		</Span>
+		<Span color="Comment" multiline="true">
+			<Begin>/\*</Begin>
+			<End>\*/</End>
+		</Span>
+
+		<!-- Strings -->
+		<Span color="String">
+			<Begin>"</Begin>
+			<End>"</End>
+			<RuleSet>
+				<Span begin="\\" end="."/>
+			</RuleSet>
+		</Span>
+		<Span color="String">
+			<Begin>'</Begin>
+			<End>'</End>
+			<RuleSet>
+				<Span begin="\\" end="."/>
+			</RuleSet>
+		</Span>
+
+		<!-- Variables -->
+		<Span color="Variable" multiline="true">
+			<Begin>$\{</Begin>
+			<End>}</End>
+		</Span>
+		<Rule color="Variable">\$[0-9]</Rule>
+		<Rule color="Variable">\$[A-Za-z_][A-Za-z0-9_]*</Rule>
+
+		<!-- Numbers -->
+		<Rule color="Number">-?\b0[xX][0-9a-fA-F]+\b</Rule>
+		<Rule color="Number">-?\b[0-9]+\b</Rule>
+
+		<!-- Preprocessor Directives -->
+		<Span color="Directive">
+			<Begin>!</Begin>
+			<End> </End>
+		</Span>
+
+		<!-- Section/SectionEnd -->
+		<Rule color="Section">\b(Section|SectionEnd|SectionGroup|SectionGroupEnd|Function|FunctionEnd|Page|PageEx|PageExEnd|LangString|LoadLanguageFile)\b</Rule>
+
+		<!-- Labels -->
+		<Rule color="Label">:[a-zA-Z_][a-zA-Z0-9_]*</Rule>
+
+		<!-- Keywords - Page Types -->
+		<Rule color="Keyword">\b(license|components|directory|instfiles|uninstConfirm|custom)\b</Rule>
+
+		<!-- Keywords - Section Types -->
+		<Rule color="Keyword">\b(-?RO|-?SF|-?SELECTED|-?SECGRP|SECTEND)\b</Rule>
+
+		<!-- Keywords - Core Instructions -->
+		<Rule color="Keyword">\b(AddBrandingImage|AllowRootDirInstall|AllowSkipFiles|AutoCloseWindow|BGFont|BGGradient|BrandingText|Caption|CompletedText|ComponentText|CopyFiles|CreateDirectory|CreateFont|CreateShortCut|Delete|DeleteINISec|DeleteINIValue|DetailPrint|DetailsButtonText|DirText|DirVar|DirVerify|EnableWindow|EnumRegKey|EnumRegValue|Exch|Exec|ExecShell|ExecShellWait|ExecWait|ExpandEnvStrings|File|FileBufSize|FileClose|FileErrorText|FileOpen|FileRead|FileReadByte|FileReadUTF16LE|FileSeek|FileWrite|FileWriteByte|FileWriteUTF16LE|FindClose|FindFirst|FindNext|FindWindow|FlushINI|GetCurInstType|GetCurrentAddress|GetDlgItem|GetDLLVersion|GetDLLVersionLocal|GetErrorLevel|GetFileTime|GetFileTimeLocal|GetFullPathName|GetFunctionAddress|GetInstDirError|GetLabelAddress|GetTempFileName|Goto|HideWindow|Icon|IfAbort|IfErrors|IfFileExists|IfRebootFlag|IfSilent|InitPluginsDir|InstallButtonText|InstallColors|InstallDir|InstallDirRegKey|InstProgressFlags|InstType|InstTypeFlags|InstTypeGetText|InstTypeSetText|IntCmp|IntCmpU|IntFmt|IntOp|IsWindow|LangString|LicenseBkColor|LicenseData|LicenseForceSelection|LicenseLangString|LicenseText|LoadLanguageFile|LogSet|LogText|ManifestDPIAware|ManifestLongPaths|ManifestMaxVersionTested|ManifestOSVersionSupported|MessageBox|MiscButtonText|Name|Nop|OutFile|PEFlags|Pop|Push|Quit|ReadEnvStr|ReadINIStr|ReadRegDWORD|ReadRegStr|Reboot|RegDLL|RemoveDir|RemoveFile|ReserveFile|Return|RMDir|SearchPath|Section|SectionEnd|SectionGetFlags|SectionGetInstTypes|SectionGetSize|SectionGetText|SectionIn|SectionSetFlags|SectionSetInstTypes|SectionSetSize|SectionSetText|SendMessage|SetAutoClose|SetBrandingImage|SetCompress|SetCompressor|SetCompressorDictSize|SetCtlColors|SetCurInstType|SetDatablockOptimize|SetDateSave|SetDetailsPrint|SetDetailsView|SetErrorLevel|SetErrors|SetFileAttributes|SetFont|SetOutPath|SetOverwrite|SetRebootFlag|SetShellVarContext|SetSilent|ShowInstDetails|ShowUninstDetails|ShowWindow|SilentInstall|SilentUnInstall|Sleep|SpaceTexts|StrCmp|StrCmpS|StrCpy|StrLen|SubCaption|UninstallButtonText|UninstallCaption|UninstallIcon|UninstallSubCaption|UninstallText|UnRegDLL|Var|VIAddVersionKey|VIProductVersion|WindowIcon|WriteINIStr|WriteRegBin|WriteRegDWORD|WriteRegExpandStr|WriteRegMultiStr|WriteRegNone|WriteRegStr|WriteUninstaller|XPStyle)\b</Rule>
+
+		<!-- Keywords - Modern UI 2 -->
+		<Rule color="Keyword">\b(MUI_ABORTWARNING|MUI_BGCOLOR|MUI_COMPONENTSPAGE_CHECKBITMAP|MUI_COMPONENTSPAGE_NODEFAULT|MUI_COMPONENTSPAGE_SMALLDESC|MUI_COMPONENTSPAGE_TEXTCOMPLIST|MUI_COMPONENTSPAGE_TEXTDESC_INFO|MUI_COMPONENTSPAGE_TEXTDESC_TITLE|MUI_COMPONENTSPAGE_TEXTINSTFILE|MUI_COMPONENTSPAGE_TEXTTOP|MUI_CUSTOMFUNCTION_ABORT|MUI_CUSTOMFUNCTION_GUIINIT|MUI_CUSTOMFUNCTION_UNABORT|MUI_CUSTOMFUNCTION_UNGUIINIT|MUI_DESCRIPTION_TEXT|MUI_DIRECTORYPAGE_BGCOLOR|MUI_DIRECTORYPAGE_TEXT_DEST|MUI_DIRECTORYPAGE_TEXT_TOP|MUI_DIRECTORYPAGE_VARIABLE|MUI_FINISHPAGE_BUTTON|MUI_FINISHPAGE_CANCEL_ENABLED|MUI_FINISHPAGE_LINK|MUI_FINISHPAGE_LINK_COLOR|MUI_FINISHPAGE_LINK_LOCATION|MUI_FINISHPAGE_NOREBOOTSUPPORT|MUI_FINISHPAGE_NOAUTOCLOSE|MUI_FINISHPAGE_REBOOTLATER_DEFAULT|MUI_FINISHPAGE_RUN|MUI_FINISHPAGE_RUN_FUNCTION|MUI_FINISHPAGE_RUN_NOTCHECKED|MUI_FINISHPAGE_RUN_PARAMETERS|MUI_FINISHPAGE_RUN_SHOW_DISABLED|MUI_FINISHPAGE_SHOWREADME|MUI_FINISHPAGE_SHOWREADME_NOTCHECKED|MUI_FINISHPAGE_SHOWREADME_TEXT|MUI_FINISHPAGE_TEXT|MUI_FINISHPAGE_TEXT_LARGE|MUI_FINISHPAGE_TEXT_REBOOT|MUI_FINISHPAGE_TEXT_REBOOTLATER|MUI_FINISHPAGE_TEXT_REBOOTNOW|MUI_FINISHPAGE_TITLE|MUI_FINISHPAGE_TITLE_3LINES|MUI_FUNCTION_DESCRIPTION_BEGIN|MUI_FUNCTION_DESCRIPTION_END|MUI_HEADER_TEXT|MUI_HEADER_TRANSPARENT_TEXT|MUI_HEADER_TITLE|MUI_HEADER_TITLE_BITMAP|MUI_HEADER_TITLE_TEXT|MUI_ICON|MUI_INSTALLCOLORS|MUI_INSTFILESPAGE_ABORTHEADER_SUBTEXT|MUI_INSTFILESPAGE_ABORTHEADER_TEXT|MUI_INSTFILESPAGE_COLORS|MUI_INSTFILESPAGE_FINISHHEADER_SUBTEXT|MUI_INSTFILESPAGE_FINISHHEADER_TEXT|MUI_INSTFILESPAGE_NOAUTOCLOSE|MUI_INSTFILESPAGE_PROGRESS_TEXT|MUI_LANGUAGE|MUI_LANGDLL_ALLLANGUAGES|MUI_LANGDLL_ALWAYSSHOW|MUI_LANGDLL_DISPLAY|MUI_LANGDLL_INFO|MUI_LANGDLL_REGISTRY_KEY|MUI_LANGDLL_REGISTRY_ROOT|MUI_LANGDLL_REGISTRY_VALUENAME|MUI_LANGDLL_WINDOWTITLE|MUI_LICENSEPAGE_BGCOLOR|MUI_LICENSEPAGE_BUTTON|MUI_LICENSEPAGE_CHECKBOX|MUI_LICENSEPAGE_CHECKBOX_TEXT|MUI_LICENSEPAGE_SHORT_TEXT|MUI_LICENSEPAGE_TEXT_BOTTOM|MUI_LICENSEPAGE_TEXT_TOP|MUI_PAGE|MUI_PAGE_CUSTOMFUNCTION_LEAVE|MUI_PAGE_CUSTOMFUNCTION_PRE|MUI_PAGE_CUSTOMFUNCTION_SHOW|MUI_PAGE_HEADER_SUBTEXT|MUI_PAGE_HEADER_TEXT|MUI_PAGE_WELCOME|MUI_RESERVEFILE_INSTALLOPTIONS|MUI_RESERVEFILE_LANGDLL|MUI_SPECIALINI|MUI_STARTMENU_GETFOLDER|MUI_STARTMENU_WRITE_BEGIN|MUI_STARTMENU_WRITE_END|MUI_UI|MUI_UI_COMPONENTSPAGE_NODEFAULT|MUI_UI_COMPONENTSPAGE_SMALLDESC|MUI_UI_COMPONENTSPAGE_TEXTDESC|MUI_UNABORTWARNING|MUI_UNCONFIRMPAGE_TEXT_DEST|MUI_UNCONFIRMPAGE_TEXT_TOP|MUI_UNFUNCTION_DESCRIPTION_BEGIN|MUI_UNFUNCTION_DESCRIPTION_END|MUI_UNHEADER_TEXT|MUI_UNICON|MUI_UNPAGE|MUI_UNPAGE_WELCOME|MUI_UNWELCOMEFINI_TEXT|MUI_WELCOMEFINI_TEXT|MUI_WELCOMEPAGE_TITLE|MUI_WELCOMEPAGE_TEXT|MUI_WIZIMAGE|MUI_WIZIMAGE_WATER|MUI_WIZIMAGE_WATER_NOALPHABLEND)\b</Rule>
+
+		<!-- Operators -->
+		<Rule color="Operator">==|!=|&lt;=|&gt;=|&lt;&lt;|&gt;&gt;|[-+*/%&amp;|^~!&lt;&gt;?:]</Rule>
+
+		<!-- Punctuation -->
+		<Rule color="Punctuation">[{}\[\]();,]</Rule>
+	</RuleSet>
+</SyntaxDefinition>

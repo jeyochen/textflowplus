@@ -1,0 +1,65 @@
+<UserControl
+    x:Class="TextFlowPlus.Views.LocalTerminalView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit">
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.status">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style Selector="Border.status-bar">
+            <Setter Property="Background" Value="{DynamicResource StatusBarBackgroundBrush}" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0,1,0,0" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- 终端显示区域（本地 shell 输入输出） -->
+        <avaloniaEdit:TextEditor
+            x:Name="TerminalEditor"
+            Grid.Row="0"
+            Background="#0C0C0C"
+            Padding="16,2,0,2"
+            Foreground="#CCCCCC"
+            FontFamily="Consolas, Microsoft YaHei UI"
+            FontSize="14"
+            ShowLineNumbers="False"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <avaloniaEdit:TextEditor.ContextMenu>
+                <ContextMenu Opening="TerminalContextMenu_Opening">
+                    <MenuItem Header="复制" Click="CopyMenuItem_Click" />
+                    <MenuItem Header="粘贴" Click="PasteMenuItem_Click" />
+                    <Separator />
+                    <MenuItem Header="全选" Click="SelectAllMenuItem_Click" />
+                    <MenuItem Header="清除终端" Click="ClearTerminalMenuItem_Click" />
+                </ContextMenu>
+            </avaloniaEdit:TextEditor.ContextMenu>
+        </avaloniaEdit:TextEditor>
+
+        <!-- 底部状态栏 -->
+        <Border Grid.Row="1" Classes="status-bar">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                    <Ellipse Width="8" Height="8" x:Name="StatusDot" Fill="Gray" />
+                    <TextBlock x:Name="StatusText" Text="正在启动" Classes="status" />
+                </StackPanel>
+                <TextBlock Grid.Column="1" x:Name="ShellNameText" Text="" Margin="15,0,0,0" Classes="status" />
+                <TextBlock Grid.Column="2" x:Name="EncodingText" Text="UTF-8" Margin="15,0,0,0" Classes="status" />
+                <TextBlock Grid.Column="4" x:Name="TerminalSizeText" Text="80x24" Classes="status" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

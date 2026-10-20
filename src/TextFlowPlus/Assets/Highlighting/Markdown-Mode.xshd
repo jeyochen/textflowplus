@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="Markdown"
+                  extensions=".md;.markdown"
+                  xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+	<!-- 分级标题（真正区分大小） -->
+	<Color name="H1" foreground="#2E75B6" fontWeight="bold" size="180%" />
+	<Color name="H2" foreground="#2E75B6" fontWeight="bold" size="160%" />
+	<Color name="H3" foreground="#2E75B6" fontWeight="bold" size="140%" />
+	<Color name="H4" foreground="#2E75B6" fontWeight="bold" size="120%" />
+	<Color name="H5" foreground="#2E75B6" fontWeight="bold" size="110%" />
+	<Color name="H6" foreground="#2E75B6" fontWeight="bold" size="100%" />
+
+	<Color name="Bold" foreground="#000000" fontWeight="bold" />
+	<Color name="Italic" foreground="#000000" fontStyle="italic" />
+	<Color name="Strikethrough" foreground="#808080" />
+	<Color name="Highlight" foreground="#000000" backgroundColor="#FFFF00" />
+	<Color name="Code" foreground="#A31515" />
+	<Color name="CodeBlock" foreground="#808080" />
+	<Color name="LinkText" foreground="#0000FF" />
+	<Color name="LinkUrl" foreground="#008000" />
+	<Color name="Quote" foreground="#808080" />
+	<Color name="List" foreground="#800080" />
+	<Color name="HorizontalRule" foreground="#808080" />
+	<Color name="Image" foreground="#800080" />
+
+	<RuleSet>
+		<!-- 粗体 **text** -->
+		<Span color="Bold" multiline="false">
+			<Begin>\*\*</Begin>
+			<End>\*\*</End>
+		</Span>
+
+		<!-- 斜体 *text* -->
+		<Span color="Italic" multiline="false">
+			<Begin>(?&lt;!\*)\*</Begin>
+			<End>\*(?!\*)</End>
+		</Span>
+
+		<!-- 删除线 ~~text~~ -->
+		<Span color="Strikethrough" multiline="false">
+			<Begin>~~</Begin>
+			<End>~~</End>
+		</Span>
+
+		<!-- 高亮 ==text== -->
+		<Span color="Highlight" multiline="false">
+			<Begin>==</Begin>
+			<End>==</End>
+		</Span>
+
+		<!-- 行内代码 `code` -->
+		<Span color="Code" multiline="false">
+			<Begin>`</Begin>
+			<End>`</End>
+		</Span>
+
+		<!-- 代码块 ``` -->
+		<Span color="CodeBlock" multiline="true">
+			<Begin>```</Begin>
+			<End>```</End>
+			<RuleSet />
+		</Span>
+
+		<!-- 图片 ![alt](url) -->
+		<Span color="Image" multiline="false">
+			<Begin>!\[</Begin>
+			<End>\]</End>
+		</Span>
+
+		<!-- 链接 [text](url) -->
+		<Span color="LinkText" multiline="false">
+			<Begin>\[</Begin>
+			<End>\]</End>
+		</Span>
+		<Span color="LinkUrl" multiline="false">
+			<Begin>\]\(</Begin>
+			<End>\)</End>
+		</Span>
+
+		<!-- 自动链接 <url> -->
+		<Span color="LinkUrl" multiline="false">
+			<Begin>&lt;http</Begin>
+			<End>&gt;</End>
+		</Span>
+
+		<!-- ====================== 分级标题（真正不一样大） ====================== -->
+		<Span color="H1" begin="^#\s"/>
+		<Span color="H2" begin="^##\s"/>
+		<Span color="H3" begin="^###\s"/>
+		<Span color="H4" begin="^####\s"/>
+		<Span color="H5" begin="^#####\s"/>
+		<Span color="H6" begin="^######\s"/>
+
+		<!-- 引用 > -->
+		<Span color="Quote" begin="^\s*&gt;"/>
+
+		<!-- 列表 -->
+		<Span color="List" begin="^\s*[-*+]\s"/>
+		<Span color="List" begin="^\s*\d+\.\s"/>
+
+		<!-- 水平线 -->
+		<Span color="HorizontalRule" begin="^[-*_]{3,}"/>
+
+	</RuleSet>
+</SyntaxDefinition>

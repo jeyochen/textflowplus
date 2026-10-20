@@ -1,0 +1,39 @@
+<Window
+    CanResize="False"
+    Height="460"
+    Title="关于 TextFlowPlus"
+    Width="400"
+    WindowStartupLocation="CenterOwner"
+    x:Class="TextFlowPlus.Views.AboutDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock
+            x:Name="AppNameText"
+            FontSize="20"
+            FontWeight="Bold"
+            HorizontalAlignment="Center"
+            Text="TextFlowPlus" />
+        <TextBlock HorizontalAlignment="Center" Text="v1.0.0" />
+        <TextBlock
+            HorizontalAlignment="Center"
+            x:Name="DescText"
+            Text="跨平台文本/代码编辑器"
+            TextWrapping="Wrap" />
+        <TextBlock Text="" />
+        <TextBlock x:Name="AuthorText" HorizontalAlignment="Center" Text="作者：红尘墨客" />
+        <TextBlock HorizontalAlignment="Center" Text="邮箱：simon3032@126.com"/>
+        <TextBlock x:Name="FeaturesTitle" FontWeight="Bold" Text="功能特性：" />
+        <TextBlock x:Name="Feature1Text" Text="• 多标签页编辑 • 多种语言语法高亮 • 编码自动检测" TextWrapping="Wrap" />
+        <TextBlock x:Name="Feature2Text" Text="• 查找/替换 • JSON/YAML/XML 格式化 • HTTP 调试" TextWrapping="Wrap" />
+        <TextBlock x:Name="Feature3Text" Text="• 文件/文件夹对比 • 二进制文件支持 • 大文件支持" TextWrapping="Wrap" />
+        <TextBlock Text="" />
+        <Button
+            Content="确定"
+            HorizontalContentAlignment="Center"
+            HorizontalAlignment="Right"
+            Margin="0,0,10,10"
+            Width="80"
+            x:Name="OkButton" />
+    </StackPanel>
+</Window>

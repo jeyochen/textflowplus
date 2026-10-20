@@ -1,0 +1,161 @@
+<UserControl
+    x:Class="TextFlowPlus.Views.GitChangesPanel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:v="using:TextFlowPlus.Views">
+
+    <UserControl.Styles>
+        <!-- 面板内工具按钮：透明背景随主题，悬停淡背景 -->
+        <Style Selector="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+        </Style>
+        <Style Selector="Button:pressed">
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- 顶部：说明 + 提交/拉取/推送/刷新 + 分支选择 -->
+        <Border x:Name="HeaderBorder" Grid.Row="0" Padding="8,5" BorderThickness="0,0,0,1">
+            <Grid RowDefinitions="Auto,Auto">
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto,Auto,Auto">
+                <TextBlock x:Name="HeaderText" Text="Git 修改" FontSize="12.5" VerticalAlignment="Center" Opacity="0.9" />
+                <Button
+                    Grid.Column="1"
+                    x:Name="CommitButton"
+                    Height="22"
+                    Width="26"
+                    Padding="0"
+                    Margin="6,0,0,0"
+                    ToolTip.Tip="提交（Commit）">
+                    <Path
+                        Data="M 3.5,8.5 L 7,12 L 12.5,4"
+                        Stroke="{Binding $parent[Button].Foreground}"
+                        StrokeThickness="1.8"
+                        StrokeLineCap="Round"
+                        Width="14"
+                        Height="14"
+                        Stretch="Uniform"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center" />
+                </Button>
+                <Button
+                    Grid.Column="2"
+                    x:Name="PullButton"
+                    Height="22"
+                    Width="26"
+                    Padding="0"
+                    Margin="4,0,0,0"
+                    ToolTip.Tip="拉取（Pull）">
+                    <Path
+                        Data="M 8,2.5 L 8,10 M 4,6.5 L 8,11.5 L 12,6.5"
+                        Stroke="{Binding $parent[Button].Foreground}"
+                        StrokeThickness="1.8"
+                        StrokeLineCap="Round"
+                        Width="14"
+                        Height="14"
+                        Stretch="Uniform"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center" />
+                </Button>
+                <Button
+                    Grid.Column="3"
+                    x:Name="PushButton"
+                    Height="22"
+                    Width="26"
+                    Padding="0"
+                    Margin="4,0,0,0"
+                    ToolTip.Tip="推送（Push）">
+                    <Path
+                        Data="M 8,13 L 8,5 M 4,9 L 8,4 L 12,9"
+                        Stroke="{Binding $parent[Button].Foreground}"
+                        StrokeThickness="1.8"
+                        StrokeLineCap="Round"
+                        Width="14"
+                        Height="14"
+                        Stretch="Uniform"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center" />
+                </Button>
+                <Button
+                    Grid.Column="4"
+                    x:Name="RefreshButton"
+                    Height="22"
+                    Width="26"
+                    Padding="0"
+                    Margin="4,0,0,0"
+                    ToolTip.Tip="刷新 Git 修改列表">
+                    <Path
+                        Data="M 8,2.8 A 5.2,5.2 0 1 1 9.8,3.4 M 9.8,3.4 L 12.6,3.0 M 9.8,3.4 L 11.0,5.9"
+                        Stroke="{Binding $parent[Button].Foreground}"
+                        StrokeThickness="1.8"
+                        StrokeLineCap="Round"
+                        Width="14"
+                        Height="14"
+                        Stretch="Uniform"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center" />
+                </Button>
+            </Grid>
+
+            <!-- 分支选择：默认显示当前分支；可输入关键字模糊过滤分支列表 -->
+            <ComboBox
+                Grid.Row="1"
+                x:Name="BranchComboBox"
+                Margin="0,6,0,0"
+                Height="26"
+                FontSize="13.5"
+                IsEditable="True"
+                IsTextSearchEnabled="True"
+                HorizontalAlignment="Stretch">
+                <ComboBox.Styles>
+                    <Style Selector="ComboBoxItem">
+                        <Setter Property="FontSize" Value="13.5" />
+                        <Setter Property="Padding" Value="8,4" />
+                    </Style>
+                </ComboBox.Styles>
+            </ComboBox>
+            </Grid>
+        </Border>
+
+        <!-- 修改文件列表（背景透明：跟随面板背景，与文件列表背景一致） -->
+        <ListBox
+            x:Name="ChangesList"
+            Grid.Row="1"
+            Background="Transparent"
+            SelectionMode="Single">
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Padding" Value="6,3" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListBox.Styles>
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="v:GitChangeItem">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="{Binding StatusText}"
+                            FontFamily="Consolas"
+                            FontSize="12"
+                            FontWeight="Bold"
+                            Margin="0,0,6,0"
+                            VerticalAlignment="Center"
+                            Foreground="{Binding StatusBrush}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="{Binding DisplayPath}"
+                            FontSize="12.5"
+                            VerticalAlignment="Center"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTip.Tip="{Binding DisplayPath}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

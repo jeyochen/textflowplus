@@ -1,0 +1,98 @@
+<Window
+    x:Class="TextFlowPlus.Views.ReplaceDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="替换"
+    Width="400"
+    Height="200"
+    CanResize="False"
+    WindowStartupLocation="CenterOwner">
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<Grid Grid.Row="0" Margin="0,0,0,10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock
+                Grid.Column="0"
+                Margin="0,0,10,0"
+                VerticalAlignment="Center"
+                Text="查找内容 (_F):" />
+			<TextBox
+                x:Name="FindTextBox"
+                Grid.Column="1"
+                Height="25" />
+		</Grid>
+
+		<Grid Grid.Row="1" Margin="0,0,0,10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock
+                Grid.Column="0"
+                Margin="0,0,10,0"
+                VerticalAlignment="Center"
+                Text="替换为 (_R):" />
+			<TextBox
+                x:Name="ReplaceTextBox"
+                Grid.Column="1"
+                Height="25" />
+		</Grid>
+
+		<StackPanel
+            Grid.Row="2"
+            Margin="0,0,0,10"
+            Orientation="Horizontal">
+			<CheckBox
+                x:Name="MatchCaseCheckBox"
+                Margin="0,0,20,0"
+                Content="区分大小写" />
+			<CheckBox x:Name="MatchWholeWordCheckBox" Content="全字匹配" />
+		</StackPanel>
+
+		<StackPanel
+            Grid.Row="3"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+			<Button
+                Width="100"
+                Height="30"
+                Margin="0,0,10,0"
+                Click="FindNext_Click"
+                Content="查找下一个"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center" />
+			<Button
+                Width="80"
+                Height="30"
+                Margin="0,0,10,0"
+                Click="Replace_Click"
+                Content="替换"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center" />
+			<Button
+                Width="80"
+                Height="30"
+                Margin="0,0,10,0"
+                Click="ReplaceAll_Click"
+                Content="全部替换"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center" />
+			<Button
+                Width="80"
+                Height="30"
+                Click="Cancel_Click"
+                Content="取消"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center" />
+		</StackPanel>
+	</Grid>
+</Window>

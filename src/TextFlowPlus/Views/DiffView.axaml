@@ -1,0 +1,103 @@
+<UserControl
+    x:Class="TextFlowPlus.Views.DiffView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- 标题行：文件名 + 变更统计 -->
+        <Border Grid.Row="0" Padding="8,6" BorderThickness="0,0,0,1">
+            <Border.Styles>
+                <Style Selector="Border">
+                    <Setter Property="Background" Value="{DynamicResource StatusBarBackgroundBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}" />
+                </Style>
+            </Border.Styles>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock x:Name="FileNameText" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                <TextBlock x:Name="ChangeSummaryText" FontSize="12" VerticalAlignment="Center" Opacity="0.85" />
+                <!-- 差异导航：上一个/下一个 + 计数 -->
+                <Button
+                    x:Name="PrevDiffButton"
+                    Height="22"
+                    Width="26"
+                    Padding="0"
+                    ToolTip.Tip="上一个差异">
+                    <Path
+                        Data="M 8,13 L 8,4 M 4.5,7.5 L 8,3.5 L 11.5,7.5"
+                        Stroke="{Binding $parent[Button].Foreground}"
+                        StrokeThickness="1.8"
+                        StrokeLineCap="Round"
+                        Width="14"
+                        Height="14"
+                        Stretch="Uniform"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center" />
+                </Button>
+                <Button
+                    x:Name="NextDiffButton"
+                    Height="22"
+                    Width="26"
+                    Padding="0"
+                    ToolTip.Tip="下一个差异">
+                    <Path
+                        Data="M 8,3 L 8,12 M 4.5,8.5 L 8,12.5 L 11.5,8.5"
+                        Stroke="{Binding $parent[Button].Foreground}"
+                        StrokeThickness="1.8"
+                        StrokeLineCap="Round"
+                        Width="14"
+                        Height="14"
+                        Stretch="Uniform"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center" />
+                </Button>
+                <TextBlock x:Name="DiffNavText" Text="差异 0/0" FontSize="12" VerticalAlignment="Center" Opacity="0.85" />
+            </StackPanel>
+        </Border>
+
+        <!-- 左右对比：左=修改前（HEAD），右=修改后（工作区） -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*">
+            <Grid Grid.Column="0" RowDefinitions="Auto,*">
+                <Border Grid.Row="0" Padding="6,3" BorderThickness="0,0,0,1">
+                    <Border.Styles>
+                        <Style Selector="Border">
+                            <Setter Property="Background" Value="{DynamicResource StatusBarBackgroundBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}" />
+                        </Style>
+                    </Border.Styles>
+                    <TextBlock x:Name="LeftHeaderText" Text="修改前 (HEAD)" FontSize="12" VerticalAlignment="Center" />
+                </Border>
+                <avaloniaEdit:TextEditor
+                    x:Name="LeftEditor"
+                    Grid.Row="1"
+                    IsReadOnly="True"
+                    ShowLineNumbers="True"
+                    FontFamily="Consolas"
+                    FontSize="14"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto" />
+            </Grid>
+
+            <Grid Grid.Column="1" RowDefinitions="Auto,*">
+                <Border Grid.Row="0" Padding="6,3" BorderThickness="1,0,0,1">
+                    <Border.Styles>
+                        <Style Selector="Border">
+                            <Setter Property="Background" Value="{DynamicResource StatusBarBackgroundBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}" />
+                        </Style>
+                    </Border.Styles>
+                    <TextBlock x:Name="RightHeaderText" Text="修改后 (工作区)" FontSize="12" VerticalAlignment="Center" />
+                </Border>
+                <avaloniaEdit:TextEditor
+                    x:Name="RightEditor"
+                    Grid.Row="1"
+                    IsReadOnly="True"
+                    ShowLineNumbers="True"
+                    FontFamily="Consolas"
+                    FontSize="14"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto" />
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

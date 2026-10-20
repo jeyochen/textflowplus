@@ -1,0 +1,31 @@
+<Window
+    CanResize="False"
+    Height="130"
+    Title="发现新版本"
+    Width="360"
+    WindowStartupLocation="CenterOwner"
+    x:Class="TextFlowPlus.Views.UpdateAvailableDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Margin="16" Spacing="8">
+        <TextBlock x:Name="BodyText" TextWrapping="Wrap" FontSize="13" LineHeight="18" />
+        <Button
+            x:Name="DownloadLink"
+            Content="https://www.app2s.cn"
+            Click="DownloadLink_Click"
+            HorizontalAlignment="Left"
+            Background="Transparent"
+            Padding="0"
+            FontSize="13"
+            Foreground="{DynamicResource SystemAccentBrush}"
+            BorderThickness="0"
+            Cursor="Hand"
+            HorizontalContentAlignment="Left" />
+        <Button
+            Content="确定"
+            HorizontalAlignment="Right"
+            HorizontalContentAlignment="Center"
+            Width="72"
+            x:Name="OkButton" />
+    </StackPanel>
+</Window>

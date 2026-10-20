@@ -1,0 +1,71 @@
+<Window
+    x:Class="TextFlowPlus.Views.FindDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="查找"
+    Width="400"
+    Height="150"
+    CanResize="False"
+    WindowStartupLocation="CenterOwner">
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+
+		<TextBlock
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="0,0,10,10"
+            VerticalAlignment="Center"
+            Text="查找内容 (_F):" />
+		<TextBox
+            x:Name="FindTextBox"
+            Grid.Row="0"
+            Grid.Column="1"
+            Width="250"
+            Height="25"
+            Margin="0,0,0,10" />
+
+		<StackPanel
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="0,0,0,10"
+            Orientation="Horizontal">
+			<CheckBox
+                x:Name="MatchCaseCheckBox"
+                Margin="0,0,20,0"
+                Content="区分大小写" />
+			<CheckBox x:Name="MatchWholeWordCheckBox" Content="全字匹配" />
+		</StackPanel>
+
+		<StackPanel
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+			<Button
+                Width="100"
+                Height="30"
+                Margin="0,0,10,0"
+                Click="FindNext_Click"
+                Content="查找下一个"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center" />
+			<Button
+                Width="80"
+                Height="30"
+                Click="Cancel_Click"
+                Content="取消"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center" />
+		</StackPanel>
+	</Grid>
+</Window>

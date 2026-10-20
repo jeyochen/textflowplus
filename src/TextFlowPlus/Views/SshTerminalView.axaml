@@ -1,0 +1,173 @@
+<UserControl
+    x:Class="TextFlowPlus.Views.SshTerminalView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit">
+
+    <UserControl.Styles>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#0078D4" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Padding" Value="6,2" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.primary:pointerover">
+            <Setter Property="Background" Value="#106EBE" />
+        </Style>
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource ButtonSecondaryForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ButtonSecondaryBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="6,2" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.secondary:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SecondaryHoverBackgroundBrush}" />
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource LabelForegroundBrush}" />
+            <Setter Property="Margin" Value="4,0" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style Selector="TextBlock.status">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="Gray" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <!-- 为连接面板中的 TextBox 设置样式 -->
+        <Style Selector="Border.connection-panel TextBox">
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBoxForegroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource TextBoxBackgroundBrush}" />
+        </Style>
+        <Style Selector="Border.connection-panel TextBox.password">
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="PasswordChar" Value="*" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBoxForegroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource TextBoxBackgroundBrush}" />
+        </Style>
+        <Style Selector="Border.connection-panel">
+            <Setter Property="Background" Value="{DynamicResource PanelBackgroundBrush}" />
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+        </Style>
+        <Style Selector="Border.status-bar">
+            <Setter Property="Background" Value="{DynamicResource StatusBarBackgroundBrush}" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0,1,0,0" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- 连接设置面板 -->
+        <Border Grid.Row="0" Classes="connection-panel">
+            <WrapPanel Orientation="Horizontal">
+                <!-- 主机信息 -->
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,8,0">
+                    <TextBlock Text="主机:" Classes="label" />
+                    <TextBox x:Name="HostTextBox" Width="120" PlaceholderText="主机 IP" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,8,0">
+                    <TextBlock Text="端口:" Classes="label" />
+                    <TextBox x:Name="PortTextBox" Width="50" Text="22" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,8,0">
+                    <TextBlock Text="用户:" Classes="label" />
+                    <TextBox x:Name="UsernameTextBox" Width="90" PlaceholderText="用户名" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,8,0">
+                    <TextBlock Text="密码:" Classes="label" />
+                    <TextBox x:Name="PasswordTextBox" Width="100" PlaceholderText="密码" Classes="password" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,8,0">
+                    <CheckBox x:Name="SavePasswordCheckBox" Content="保存密码" IsChecked="True" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,8,0">
+                    <TextBlock Text="超时:" Classes="label" />
+                    <TextBox x:Name="TimeoutTextBox" Width="40" Text="10" />
+                    <TextBlock Text="秒" Classes="label" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,8,0">
+                    <Button x:Name="PrivateKeyButton" Classes="secondary" Click="PrivateKeyButton_Click" Padding="8,4">私钥</Button>
+                    <TextBlock x:Name="PrivateKeyPathText" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" MaxWidth="150" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,8,0">
+                    <Button x:Name="ConnectButton" Classes="primary" Click="ConnectButton_Click">连接</Button>
+                    <Button x:Name="DisconnectButton" Classes="secondary" Click="DisconnectButton_Click" IsEnabled="False">断开</Button>
+                </StackPanel>
+                <Button x:Name="RecentButton" Classes="secondary" Click="RecentButton_Click" Margin="0,0,8,0">最近连接</Button>
+                <TextBlock x:Name="StatusText" Classes="status" />
+            </WrapPanel>
+        </Border>
+
+        <!-- 终端显示区域 -->
+        <avaloniaEdit:TextEditor
+        x:Name="TerminalEditor"
+        Grid.Row="1"
+        Background="#0C0C0C"
+        Padding="16,2,0,2"
+        Foreground="#CCCCCC"
+        FontFamily="Consolas, Microsoft YaHei UI"
+        FontSize="14"
+        ShowLineNumbers="False"
+        HorizontalScrollBarVisibility="Auto"
+        VerticalScrollBarVisibility="Auto">
+            <avaloniaEdit:TextEditor.ContextMenu>
+                <ContextMenu Opening="TerminalContextMenu_Opening">
+                    <MenuItem Header="复制" Click="CopyMenuItem_Click" />
+                    <MenuItem Header="粘贴" Click="PasteMenuItem_Click" />
+                    <Separator />
+                    <MenuItem Header="全选" Click="SelectAllMenuItem_Click" />
+                    <MenuItem Header="清除终端" Click="ClearTerminalMenuItem_Click" />
+                    <Separator />
+                    <MenuItem Header="断开连接" Click="DisconnectMenuItem_Click" />
+                </ContextMenu>
+            </avaloniaEdit:TextEditor.ContextMenu>
+        </avaloniaEdit:TextEditor>
+
+        <!-- 底部状态栏 -->
+        <Border Grid.Row="2" Classes="status-bar">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                    <Ellipse Width="8" Height="8" x:Name="ConnectionStatusDot" Fill="Gray" />
+                    <TextBlock x:Name="ConnectionStatusText" Text="未连接" Foreground="{DynamicResource TextSecondaryBrush}" />
+                </StackPanel>
+                <TextBlock Grid.Column="1" x:Name="HostInfoText" Text="" Margin="15,0,0,0" />
+                <TextBlock Grid.Column="2" x:Name="EncodingText" Text="UTF-8" Margin="15,0,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
+                <TextBlock Grid.Column="3" x:Name="LatencyText" Text="" Margin="15,0,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
+                <TextBlock Grid.Column="5" x:Name="TerminalSizeText" Text="80x24" Foreground="{DynamicResource TextSecondaryBrush}" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

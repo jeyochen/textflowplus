@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="HTML"
+                  extensions=".html;.htm"
+                  xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+    <Color name="Comment" foreground="#008000" />
+    <Color name="String" foreground="#A05000" />
+    <Color name="Keyword" foreground="#0000FF" fontWeight="bold" />
+    <Color name="Tag" foreground="#800080" fontWeight="bold" />
+    <Color name="AttributeName" foreground="#FF0000" />
+    <Color name="Operator" foreground="#000000" />
+    <Color name="Doctype" foreground="#808080" />
+    <Color name="Entity" foreground="#808080" />
+
+    <RuleSet>
+        <!-- Comments -->
+        <Span color="Comment">
+            <Begin>&lt;!--</Begin>
+            <End>--&gt;</End>
+        </Span>
+
+        <!-- DOCTYPE -->
+        <Span color="Doctype">
+            <Begin>&lt;!</Begin>
+            <End>&gt;</End>
+        </Span>
+
+        <!-- Tags -->
+        <Span color="Tag" ruleSet="InsideTag">
+            <Begin>&lt;[a-zA-Z][a-zA-Z0-9]*</Begin>
+            <End>&gt;</End>
+        </Span>
+
+        <!-- End tags -->
+        <Span color="Tag">
+            <Begin>&lt;/[a-zA-Z][a-zA-Z0-9]*</Begin>
+            <End>&gt;</End>
+        </Span>
+
+        <!-- Self-closing tags -->
+        <Span color="Tag">
+            <Begin>&lt;[a-zA-Z][a-zA-Z0-9]*[^&gt;]*/&gt;</Begin>
+            <End>&gt;</End>
+        </Span>
+
+        <!-- HTML Entities（&# 必须转义写成 \#，否则 # 之后被当作行注释，
+             数字实体 &#123; / &#x1F600; 两个分支会被整段忽略掉） -->
+        <Rule color="Entity">&amp;[a-zA-Z]+;|&amp;\#[0-9]+;|&amp;\#x[0-9a-fA-F]+;</Rule>
+    </RuleSet>
+
+    <RuleSet name="InsideTag">
+        <!-- Attributes -->
+        <Span color="AttributeName">
+            <Begin>[a-zA-Z-:]+(?=\s*=)</Begin>
+            <End>=</End>
+        </Span>
+
+        <!-- Attribute values -->
+        <Span color="String">
+            <Begin>"</Begin>
+            <End>"</End>
+        </Span>
+        <Span color="String">
+            <Begin>'</Begin>
+            <End>'</End>
+        </Span>
+
+        <!-- Braces -->
+        <Rule color="Operator">[/&gt;]</Rule>
+    </RuleSet>
+</SyntaxDefinition>

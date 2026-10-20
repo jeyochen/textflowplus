@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TextFlowPlus 品牌图标 — T+ 方框版（蓝描边方框，框内透明）
+  设计概念：
+    T —— 文本之柱：一横一竖构成抽象的文本行与光标，是 Text 的首字母，位于框内左上方。
+    + —— 智能增益：独立居于框内右下方，象征 AI 加持、能力叠加（Plus）。
+  版式：蓝描边正方形外框，T 与 + 分离不重叠，在框内构成对角平衡。
+  立体感处理：
+    T 笔画：纵向明→暗渐变（顶部受光为白，底部转淡靛）
+    + 号：琥珀三色渐变，全图唯一强调色
+    外框：海蓝渐变圆角方框，描边样式
+  背景：透明（框内亦透明），可直接叠加在任意底色上。
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- 外框描边：海蓝对角线渐变（左上受光 → 右下深海蓝） -->
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5CC0FF"/>
+      <stop offset="0.5" stop-color="#1E7BE0"/>
+      <stop offset="1" stop-color="#0B4EA2"/>
+    </linearGradient>
+    <!-- T 笔画纵向渐变：亮海蓝 → 深海洋蓝（与描边同色系，白底也清晰） -->
+    <linearGradient id="ink" gradientUnits="userSpaceOnUse" x1="0" y1="120" x2="0" y2="372">
+      <stop offset="0" stop-color="#4FAEF5"/>
+      <stop offset="1" stop-color="#0B4EA2"/>
+    </linearGradient>
+    <!-- + 号：琥珀三色渐变（受光的光柱） -->
+    <linearGradient id="plus" gradientUnits="userSpaceOnUse" x1="0" y1="266" x2="0" y2="400">
+      <stop offset="0" stop-color="#FDE68A"/>
+      <stop offset="0.55" stop-color="#FBBF24"/>
+      <stop offset="1" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 蓝色描边方框（框内透明） -->
+  <rect x="30" y="30" width="452" height="452" rx="104"
+        fill="none" stroke="url(#frame)" stroke-width="30"/>
+
+  <!-- T：框内左上方 -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="50">
+    <path d="M104 152 H284" stroke="url(#ink)"/>
+    <path d="M194 152 V352" stroke="url(#ink)"/>
+  </g>
+
+  <!-- +：框内右下方，与 T 不重叠 -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="38">
+    <path d="M368 266 V400" stroke="url(#plus)"/>
+    <path d="M301 333 H435" stroke="url(#plus)"/>
+  </g>
+</svg>

@@ -1,0 +1,119 @@
+<Window
+x:Class="TextFlowPlus.Views.HashCalcDialog"
+xmlns="https://github.com/avaloniaui"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+Title="信息摘要计算"
+Width="600"
+Height="400"
+WindowStartupLocation="CenterOwner"
+CanResize="True"
+ShowInTaskbar="True">
+
+    <Grid Margin="20" RowDefinitions="Auto,Auto,Auto,Auto,*, Auto">
+        <!-- 选项卡选择 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="20">
+            <RadioButton
+            x:Name="FileModeRadio"
+            Content="文件模式"
+            FontSize="14"
+            IsChecked="True" />
+            <RadioButton
+            x:Name="TextModeRadio"
+            Content="文本模式"
+            FontSize="14" />
+        </StackPanel>
+
+        <!-- 算法选择 -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5,0,0" Spacing="10">
+            <TextBlock Text="选择算法：" FontWeight="Bold" VerticalAlignment="Center" />
+            <ComboBox
+            x:Name="AlgorithmComboBox"
+            Width="150">
+                <ComboBoxItem Content="MD5" IsSelected="True" />
+                <ComboBoxItem Content="SHA-1" />
+                <ComboBoxItem Content="SHA-2" />
+                <ComboBoxItem Content="SHA-256" />
+                <ComboBoxItem Content="SHA-512" />
+                <ComboBoxItem Content="SHA3-256" />
+                <ComboBoxItem Content="SHA3-512" />
+                <ComboBoxItem Content="BLAKE2s" />
+                <ComboBoxItem Content="BLAKE2b" />
+                <ComboBoxItem Content="SM3" />
+                <ComboBoxItem Content="CRC" />
+                <ComboBoxItem Content="PBKDF2" />
+                <ComboBoxItem Content="bcrypt" />
+                <ComboBoxItem Content="Scrypt" />
+                <ComboBoxItem Content="Argon2" />
+            </ComboBox>
+        </StackPanel>
+
+        <!-- 文件选择区域 -->
+        <Grid Grid.Row="2" x:Name="FileSelectPanel" ColumnDefinitions="*,Auto" Margin="0,5,0,0">
+            <TextBox
+            x:Name="FilePathTextBox"
+            Grid.Column="0"
+            Margin="0,0,10,0"
+            IsReadOnly="True"
+            PlaceholderText="选择要计算信息摘要的文件..." />
+            <Button
+            x:Name="BrowseButton"
+            Grid.Column="1"
+            Width="80"
+            Content="浏览..." />
+        </Grid>
+
+        <!-- 文本输入区域 -->
+        <TextBox
+        x:Name="TextInputBox"
+        Grid.Row="2"
+        Margin="0,15,0,0"
+        AcceptsReturn="True"
+        TextWrapping="Wrap"
+        MinHeight="200"
+        PlaceholderText="输入要计算信息摘要的文本..."
+        IsVisible="False" />
+
+        <!-- 计算按钮 -->
+        <Button
+        x:Name="CalculateButton"
+        Grid.Row="3"
+        Margin="0,3,0,0"
+        HorizontalContentAlignment="Center"
+        HorizontalAlignment="Stretch"
+        Content="计算" />
+
+        <!-- 结果显示区域 -->
+        <Border
+        Grid.Row="4"
+        Margin="0,5,0,0"
+        Background="{DynamicResource SystemControlBackgroundAltMediumLowBrush}"
+        BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+        BorderThickness="1"
+        CornerRadius="4">
+            <Grid RowDefinitions="Auto,*" Margin="10">
+                <TextBlock
+                Grid.Row="0"
+                Margin="0,0,0,10"
+                FontWeight="Bold"
+                Text="计算结果：" />
+                <TextBox
+                x:Name="ResultTextBox"
+                Grid.Row="1"
+                IsReadOnly="True"
+                TextWrapping="Wrap"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                PlaceholderText="计算结果将显示在这里..." />
+            </Grid>
+        </Border>
+
+        <!-- 关闭按钮 -->
+        <Button
+        x:Name="CloseButton"
+        Grid.Row="5"
+        Margin="0,5,0,0"
+        Width="100"
+        HorizontalAlignment="Right"
+        HorizontalContentAlignment="Center"
+        Content="关闭" />
+    </Grid>
+</Window>

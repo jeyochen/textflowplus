@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="CSS"
+                  extensions=".css"
+                  xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+    <Color name="Comment" foreground="#008000" />
+    <Color name="String" foreground="#A05000" />
+    <Color name="Keyword" foreground="#0000FF" fontWeight="bold" />
+    <Color name="Color" foreground="#FF00FF" />
+    <Color name="Number" foreground="#0000FF" />
+    <Color name="Property" foreground="#FF0000" />
+    <Color name="Selector" foreground="#800080" fontWeight="bold" />
+    <Color name="Operator" foreground="#000000" />
+
+    <RuleSet>
+        <!-- Comments -->
+        <Span color="Comment">
+            <Begin>/\*</Begin>
+            <End>\*/</End>
+        </Span>
+
+        <!-- Strings -->
+        <Span color="String">
+            <Begin>"</Begin>
+            <End>"</End>
+            <RuleSet>
+                <Span begin="\\" end="."/>
+            </RuleSet>
+        </Span>
+        <Span color="String">
+            <Begin>'</Begin>
+            <End>'</End>
+            <RuleSet>
+                <Span begin="\\" end="."/>
+            </RuleSet>
+        </Span>
+
+        <!-- Color values（# 必须转义：XSHD 以 IgnorePatternWhitespace 编译，
+             未转义的 # 会被当作行注释，使整条规则变成空正则并抛异常终止进程） -->
+        <Rule color="Color">\#[0-9a-fA-F]{3,8}\b</Rule>
+
+        <!-- Numbers with units -->
+        <Rule color="Number">\b\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw|s|ms|deg|rad|turn)?\b</Rule>
+
+        <!-- Properties -->
+        <Span color="Property">
+            <Begin>[a-zA-Z-]+(?=\s*:)</Begin>
+            <End>:</End>
+        </Span>
+
+        <!-- Important -->
+        <Rule color="Keyword">!important</Rule>
+
+        <!-- At-rules -->
+        <Span color="Keyword">
+            <Begin>@media</Begin>
+            <End>\{</End>
+        </Span>
+        <Span color="Keyword">
+            <Begin>@keyframes</Begin>
+            <End>\{</End>
+        </Span>
+        <Rule color="Keyword">@[a-zA-Z-]+</Rule>
+
+        <!-- Selectors (simplified) -->
+        <Rule color="Selector">^[^{}]+(?=\{)</Rule>
+
+        <!-- Braces -->
+        <Rule color="Operator">[\{\}\(\)\[\]]</Rule>
+        <Rule color="Operator">[:;,]</Rule>
+    </RuleSet>
+</SyntaxDefinition>

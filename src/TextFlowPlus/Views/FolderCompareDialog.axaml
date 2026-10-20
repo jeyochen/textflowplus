@@ -1,0 +1,177 @@
+<Window
+    Height="700"
+    MinHeight="500"
+    MinWidth="1000"
+    Title="文件夹对比"
+    Width="1400"
+    WindowStartupLocation="CenterOwner"
+    x:Class="TextFlowPlus.Views.FolderCompareDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  工具栏  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Orientation="Horizontal">
+            <Button
+                Width="80"
+                Margin="0,0,5,0"
+                Content="重新对比"
+                HorizontalContentAlignment="Center"
+                x:Name="RecompareButton" />
+            <Button
+                Width="130"
+                Margin="0,0,5,0"
+                Content="合并所有（左→右）"
+                HorizontalContentAlignment="Center"
+                x:Name="MergeAllLeftToRightButton" />
+            <Button
+                Width="130"
+                Margin="0,0,5,0"
+                Content="合并所有（右→左）"
+                HorizontalContentAlignment="Center"
+                x:Name="MergeAllRightToLeftButton" />
+            <Separator Width="1" Margin="5,0" />
+            <TextBlock
+                Margin="0,0,5,0"
+                VerticalAlignment="Center"
+                Text="差异数量：" />
+            <TextBlock
+                MinWidth="30"
+                VerticalAlignment="Center"
+                FontWeight="Bold"
+                Text="0"
+                x:Name="DiffCountText" />
+        </StackPanel>
+
+        <!--  主内容区域：左右文件列表 + 差异列表  -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="250" />
+            </Grid.ColumnDefinitions>
+
+            <!--  左侧文件夹  -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!--  左侧文件夹路径  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="0,0,0,5"
+                    Orientation="Horizontal">
+                    <TextBox
+                        Width="500"
+                        Margin="0,0,5,0"
+                        VerticalContentAlignment="Center"
+                        IsReadOnly="True"
+                        x:Name="LeftFolderTextBox" />
+                    <Button
+                        Width="60"
+                        Content="浏览..."
+                        HorizontalContentAlignment="Center"
+                        x:Name="BrowseLeftButton" />
+                </StackPanel>
+
+                <!--  左侧文件列表  -->
+                <Border
+                    Grid.Row="1"
+                    BorderBrush="{DynamicResource PanelBorderBrush}"
+                    BorderThickness="1">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="LeftFileListPanel" Orientation="Vertical" />
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+
+            <!--  分隔条  -->
+            <GridSplitter
+                Grid.Column="1"
+                Width="5"
+                HorizontalAlignment="Stretch"
+                Background="{DynamicResource PanelBorderBrush}" />
+
+            <!--  右侧文件夹  -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!--  右侧文件夹路径  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="0,0,0,5"
+                    Orientation="Horizontal">
+                    <TextBox
+                        Width="500"
+                        Margin="0,0,5,0"
+                        VerticalContentAlignment="Center"
+                        IsReadOnly="True"
+                        x:Name="RightFolderTextBox" />
+                    <Button
+                        Width="60"
+                        Content="浏览..."
+                        HorizontalContentAlignment="Center"
+                        x:Name="BrowseRightButton" />
+                </StackPanel>
+
+                <!--  右侧文件列表  -->
+                <Border
+                    Grid.Row="1"
+                    BorderBrush="{DynamicResource PanelBorderBrush}"
+                    BorderThickness="1">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="RightFileListPanel" Orientation="Vertical" />
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+
+            <!--  右侧分隔条  -->
+            <GridSplitter
+                Grid.Column="3"
+                Width="5"
+                HorizontalAlignment="Stretch"
+                Background="{DynamicResource PanelBorderBrush}" />
+
+            <!--  差异列表面板  -->
+            <Grid Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="0,0,0,5"
+                    HorizontalAlignment="Center"
+                    FontWeight="Bold"
+                    Text="差异文件列表" />
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="DiffListPanel" Orientation="Vertical" />
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!--  底部状态栏  -->
+        <Border
+            Grid.Row="2"
+            Margin="0,10,0,0"
+            Padding="5">
+            <TextBlock Text="就绪" x:Name="StatusText" />
+        </Border>
+    </Grid>
+</Window>

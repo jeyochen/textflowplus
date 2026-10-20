@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="Java"
+                  extensions=".java"
+                  xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+    <Color name="Comment" foreground="#008000" />
+    <Color name="String" foreground="#A05000" />
+    <Color name="Keyword" foreground="#0000FF" fontWeight="bold" />
+    <Color name="Type" foreground="#2B91AF" />
+    <Color name="Number" foreground="#0000FF" />
+    <Color name="Annotation" foreground="#808080" />
+    <Color name="Operator" foreground="#000000" />
+    <Color name="Javadoc" foreground="#408040" fontStyle="Italic" />
+
+    <RuleSet>
+        <!-- Comments -->
+        <Span color="Comment">
+            <Begin>//</Begin>
+        </Span>
+        <Span color="Comment">
+            <Begin>/\*</Begin>
+            <End>\*/</End>
+        </Span>
+
+        <!-- Javadoc -->
+        <Span color="Javadoc">
+            <Begin>/\*\*</Begin>
+            <End>\*/</End>
+            <RuleSet>
+                <Span color="Comment">
+                    <Begin>@</Begin>
+                    <End>\s</End>
+                </Span>
+            </RuleSet>
+        </Span>
+
+        <!-- Strings -->
+        <!-- 转义序列：begin 需匹配单个反斜杠，正则写作 \\（XML 属性不转义反斜杠，原样传入） -->
+        <Span color="String">
+            <Begin>"</Begin>
+            <End>"</End>
+            <RuleSet>
+                <Span begin="\\" end="."/>
+            </RuleSet>
+        </Span>
+        <Span color="String">
+            <Begin>'</Begin>
+            <End>'</End>
+            <RuleSet>
+                <Span begin="\\" end="."/>
+            </RuleSet>
+        </Span>
+        <Span color="String">
+            <Begin>"""</Begin>
+            <End>"""</End>
+        </Span>
+
+        <!-- Annotations -->
+        <Span color="Annotation">
+            <Begin>@</Begin>
+            <End>(?=[\s(])</End>
+        </Span>
+
+        <!-- Keywords -->
+        <Keywords color="Keyword">
+            <Word>abstract</Word>
+            <Word>assert</Word>
+            <Word>boolean</Word>
+            <Word>break</Word>
+            <Word>byte</Word>
+            <Word>case</Word>
+            <Word>catch</Word>
+            <Word>char</Word>
+            <Word>class</Word>
+            <Word>const</Word>
+            <Word>continue</Word>
+            <Word>default</Word>
+            <Word>do</Word>
+            <Word>double</Word>
+            <Word>else</Word>
+            <Word>enum</Word>
+            <Word>extends</Word>
+            <Word>final</Word>
+            <Word>finally</Word>
+            <Word>float</Word>
+            <Word>for</Word>
+            <Word>goto</Word>
+            <Word>if</Word>
+            <Word>implements</Word>
+            <Word>import</Word>
+            <Word>instanceof</Word>
+            <Word>int</Word>
+            <Word>interface</Word>
+            <Word>long</Word>
+            <Word>native</Word>
+            <Word>new</Word>
+            <Word>package</Word>
+            <Word>private</Word>
+            <Word>protected</Word>
+            <Word>public</Word>
+            <Word>return</Word>
+            <Word>short</Word>
+            <Word>static</Word>
+            <Word>strictfp</Word>
+            <Word>super</Word>
+            <Word>switch</Word>
+            <Word>synchronized</Word>
+            <Word>this</Word>
+            <Word>throw</Word>
+            <Word>throws</Word>
+            <Word>transient</Word>
+            <Word>try</Word>
+            <Word>void</Word>
+            <Word>volatile</Word>
+            <Word>while</Word>
+            <Word>record</Word>
+            <Word>yield</Word>
+            <Word>var</Word>
+            <Word>sealed</Word>
+            <Word>permits</Word>
+        </Keywords>
+
+        <!-- Primitive types -->
+        <Keywords color="Type">
+            <Word>boolean</Word>
+            <Word>byte</Word>
+            <Word>char</Word>
+            <Word>short</Word>
+            <Word>int</Word>
+            <Word>long</Word>
+            <Word>float</Word>
+            <Word>double</Word>
+            <Word>void</Word>
+        </Keywords>
+
+        <!-- Literals -->
+        <Keywords color="Keyword">
+            <Word>true</Word>
+            <Word>false</Word>
+            <Word>null</Word>
+        </Keywords>
+
+        <!-- Numbers -->
+        <Rule color="Number">\b0[xX][0-9a-fA-F]+\b</Rule>
+        <Rule color="Number">\b0[bB][01]+\b</Rule>
+        <Rule color="Number">\b\d+_\d*\b</Rule>
+        <Rule color="Number">\b\d+\.?\d*(?:[eE][+-]?\d+)?[fFdD]?\b</Rule>
+        <Rule color="Number">\b\d+[lL]?\b</Rule>
+
+        <!-- Operators -->
+        <Rule color="Operator">[+\-*/%=&amp;|^&lt;&gt;!:~?]+</Rule>
+        <Rule color="Operator">-&gt;</Rule>
+        <Rule color="Operator">::</Rule>
+        <Rule color="Operator">\.\.\.</Rule>
+    </RuleSet>
+</SyntaxDefinition>
